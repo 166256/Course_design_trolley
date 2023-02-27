@@ -13,14 +13,16 @@
 */
 void Tim_gpio_config(void)
 {
-	GPIO_InitTypeDef  GPIO_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-	GPIO_Init(GPIOA,&GPIO_InitStructure);
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+
 }
 /*
 *********************************************************************************************************
@@ -31,11 +33,13 @@ void Tim_gpio_config(void)
 			  freq			PWM频率（KHz）
 			  duty			PWM占空比   
 *	返 回 值: 无        
+*	说    明：(arr + 1)*(psc + 1)/72M = Tout ; freq即Tout
+			  CCR / (arr + 1) = duty ; CCR即TIM_Pulse
 *********************************************************************************************************
 */
 void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 {
-	uint16_t arr = 36000/freq-1; //设置自动重装载寄存器的值，用于设置PWM周期
+	uint16_t arr = 36000/freq-1; // 设置自动重装载寄存器的值，用于设置PWM周期
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
@@ -48,7 +52,7 @@ void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;				// TIM的PWM1模式
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;	// 使能输出比较
-	TIM_OCInitStructure.TIM_Pulse = (arr+1)*duty/100;				// 设置占空比（具体计算公式见笔记）
+	TIM_OCInitStructure.TIM_Pulse = (arr+1)*duty/100;				// 设置占空比
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;		// TIM输出比较极性为高
 	
 	switch(tim_channel)
@@ -70,9 +74,9 @@ void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 			TIM_OC4PreloadConfig(timer,TIM_OCPreload_Enable);	//使能定时器TIMx在CCR4上的预装载寄存器
 			break;
 	}
-	TIM_CtrlPWMOutputs(timer,ENABLE);    //设置TIM1的PWM输出为使能
+//	TIM_CtrlPWMOutputs(timer,ENABLE);	//设置TIM1的PWM输出为使能
 	TIM_ARRPreloadConfig(timer,ENABLE); //使能定时器TIMx在ARR上的预装载寄存器
-	TIM_Cmd(timer,ENABLE); //使能定时器TIMx
+	TIM_Cmd(timer,ENABLE);				//使能定时器TIMx
 }
 /*
 *********************************************************************************************************

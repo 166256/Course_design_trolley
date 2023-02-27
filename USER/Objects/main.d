@@ -38,5 +38,6 @@
 .\objects\main.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\main.o: ..\HARDWARE\LED\led.h
 .\objects\main.o: ..\HARDWARE\OLED\oled.h
+.\objects\main.o: ..\HARDWARE\TCRT500L\tcrt500l.h
 .\objects\main.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
 .\objects\main.o: ..\HARDWARE\Tim_pwm\Tim_pwm.h
