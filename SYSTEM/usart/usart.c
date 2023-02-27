@@ -43,6 +43,13 @@ void uart1_init(u32 bound){
 
 }
 
+void usart1_sendbyte(uint8_t data)
+{
+	while(USART_GetFlagStatus(USART1,USART_FLAG_TXE) == RESET); //等待发送寄存器为空才能发送下一个字符	
+	USART1->DR = data;
+	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
+}
+
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 	{
 	u8 Res;

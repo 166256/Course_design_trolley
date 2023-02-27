@@ -19,7 +19,7 @@ int main (void)
 	OLED_Init();				// OLED初始化
 	delay_ms(1000);				// 等待其他设备初始化就绪
 	tcrt500l_init();
-//	uart1_init(115200);
+	uart1_init(9600);
 	Tim_gpio_config();
 	PWM_Start(TIM4,1,7,50);		//左轮
 	PWM_Start(TIM4,2,7,0);	//左轮
@@ -42,6 +42,7 @@ int main (void)
 	while(1)
 	{
 //		USART_SendData(USART1,0x05);
+		usart1_sendbyte(0x00);
 		L2 = TCRT_L2;
 		L1 = TCRT_L1;
 		R1 = TCRT_R1;

@@ -6,6 +6,8 @@
 
 
 void uart1_init(u32 bound);
+void usart1_sendbyte(uint8_t data);
+
 #endif
 
 
