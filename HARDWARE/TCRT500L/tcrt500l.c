@@ -13,6 +13,6 @@ void tcrt500l_init()
 	
 	GPIO_InitTypeStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_12 | GPIO_Pin_13;
 	GPIO_InitTypeStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_Init(GPIOA, &GPIO_InitTypeStructure);
+	GPIO_Init(GPIOB, &GPIO_InitTypeStructure);
 
 }

@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_LD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\adc;..\HARDWARE\LED;..\HARDWARE\OLED;..\HARDWARE\PWM;..\USER;..\HARDWARE\EXTRA;..\HARDWARE\flash;..\HARDWARE\DataScope_DP;..\HARDWARE\exti;..\HARDWARE\TIMER;..\HARDWARE\ENCODER;..\HARDWARE\CONTROL;..\HARDWARE\spi;..\HARDWARE\BUZZER;..\HARDWARE\Tim_pwm;..\HARDWARE\Encoder_speed;..\HARDWARE\GPIO;..\HARDWARE\TCRT500L</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\adc;..\HARDWARE\LED;..\HARDWARE\OLED;..\HARDWARE\PWM;..\USER;..\HARDWARE\EXTRA;..\HARDWARE\flash;..\HARDWARE\DataScope_DP;..\HARDWARE\exti;..\HARDWARE\TIMER;..\HARDWARE\ENCODER;..\HARDWARE\CONTROL;..\HARDWARE\spi;..\HARDWARE\BUZZER;..\HARDWARE\Tim_pwm;..\HARDWARE\Encoder_speed;..\HARDWARE\GPIO;..\HARDWARE\TCRT500L;..\HARDWARE\adc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,6 +409,11 @@
               <FileName>tcrt500l.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\TCRT500L\tcrt500l.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\adc\adc.c</FilePath>
             </File>
           </Files>
         </Group>

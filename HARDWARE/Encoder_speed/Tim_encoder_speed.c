@@ -2,81 +2,72 @@
 
 #include	"Tim_encoder_speed.h"
 
-int Encoder_Timer_Overflow_L = 0;		//全局变量，记录左编码器溢出次数
-int	Encoder_Timer_Overflow_R = 0;		//全局变量，记录右编码器溢出次数
+volatile int Encoder_Timer_Overflow_L = 0;		//全局变量，记录左编码器溢出次数
+volatile int	Encoder_Timer_Overflow_R = 0;		//全局变量，记录右编码器溢出次数
 
-int16_t encoderNum_L = 0;			
-int16_t encoderNum_R = 0;
-float rotateSpeed_L = 0;
-float rotateSpeed_R = 0;
-
+volatile int16_t encoderNum_L = 0;			
+volatile int16_t encoderNum_R = 0;
+volatile float rotateSpeed_L = 0;
+volatile float rotateSpeed_R = 0;
 
 /*
 *********************************************************************************************************
-*	函 数 名: Tim_E1B_E1A_Config                    
+*	函 数 名: tim_encoderL_init                    
 *	功能说明: 对左轮编码器所对应的定时器进行初始化     
 *	形    参: 无
 *	返 回 值: 无    
-*	说    明：左轮编码器A相-->PA15<-->TIM2_CH1,    B相-->PB3<-->TIM2_CH2
+*	说    明：左轮编码器A相-->PA0-->TIM2_CH1,    B相-->PA1-->TIM2_CH2
 *********************************************************************************************************
 */
-void Tim_E1B_E1A_Config(void)
+void Tim_EncoderL_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;	
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);	// 重映射需要开启AFIO时钟
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
-
-	// c8t6的PB3、PB4、PA15引脚默认配置为JTAG功能，关闭JTAG功能，让其可以充当普通GPIO口来进行使用
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);	// 引脚重映射函数
+//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
 	
-	// 当不重映射时，默认TIM2四个的IO口是PA0、PA1、PA2、PA3 
-	// 重映射后，使用PA15、PB3、PA2、PA3的作为TIM2的IO口	
-	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2,ENABLE);	
-	
-	// PA15为E1B
 	GPIO_StructInit(&GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;  
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;  
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
 	GPIO_Init(GPIOA,&GPIO_InitStructure); 
-	
-	// PB3为E1A
-	GPIO_InitStructure.GPIO_Pin = GPIO_E1A;//配置引脚
-	GPIO_Init(GPIOB,&GPIO_InitStructure); //初始化GPIO
 
+//	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);	
+//	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2,ENABLE);
+	
+//	TIM_DeInit(TIM2);
+	
 	TIM_TimeBaseStructInit(&TIM_TimeBaseInitStructure);		
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;    // 向上计数
 	TIM_TimeBaseInitStructure.TIM_Period = Encoder_TIM_Period;         // 重装载值，不可大于65535 因为F103的定时器是16位的
 	TIM_TimeBaseInitStructure.TIM_Prescaler =1-1;                      // 分频系数1，即不分频
-	TIM_TimeBaseInit(Tim_E1B_E1A,&TIM_TimeBaseInitStructure);
+	TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStructure);
 
 	// 编码器配置
-	TIM_EncoderInterfaceConfig(Tim_E1B_E1A, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising); // 使用编码器模式3,进行4倍频		
+	TIM_EncoderInterfaceConfig(TIM2, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising); // 使用编码器模式3,进行4倍频		
 	TIM_ICStructInit(&TIM_ICInitStructure); 
-	TIM_ICInitStructure.TIM_ICFilter = 0;				// 输入通道的滤波参数
-	TIM_ICInit(Tim_E1B_E1A, &TIM_ICInitStructure);		// 输入通道初始化		
-	TIM_ClearFlag(Tim_E1B_E1A, TIM_FLAG_Update);		// 清除TIM的更新标志位，更新标志是由于CNT计数到arr产生的
-	TIM_ITConfig(Tim_E1B_E1A, TIM_IT_Update, ENABLE);	// 使能定时器中断	
-	TIM_SetCounter(Tim_E1B_E1A,0);						// 设定计数器的初值为0	
-	TIM_Cmd(Tim_E1B_E1A,ENABLE);						// 使能控制定时器，计数器开始计数
+	TIM_ICInitStructure.TIM_ICFilter = 0;		// 输入通道的滤波参数
+	TIM_ICInit(TIM2, &TIM_ICInitStructure);		// 输入通道初始化		
+	
+	TIM_ClearFlag(TIM2, TIM_FLAG_Update);		// 清除TIM的更新标志位，更新标志是由于CNT计数到arr产生的
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);	// 使能定时器中断	
+	TIM_SetCounter(TIM2,0);						// 设定计数器的初值为0	
+	TIM_Cmd(TIM2,ENABLE);						// 使能控制定时器，计数器开始计数
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: Tim_E2B_E2A_Config                    
+*	函 数 名: tim_encoderR_init                    
 *	功能说明: 对右轮编码器所对应的定时器进行初始化     
 *	形    参: 无
 *	返 回 值: 无    
 *	说    明：右轮编码器A相-->PA6<-->TIM3_CH1,B相-->PA7<-->TIM3_CH2
 *********************************************************************************************************
 */
-void Tim_E2B_E2A_Config(void)
+void Tim_EncoderR_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;	
@@ -85,32 +76,28 @@ void Tim_E2B_E2A_Config(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
 
-	//GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-	//GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
-	//GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE);
 	GPIO_StructInit(&GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA,&GPIO_InitStructure); 
-	//GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3,ENABLE);
 
 	TIM_TimeBaseStructInit(&TIM_TimeBaseInitStructure);		
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;    // 向上计数
 	TIM_TimeBaseInitStructure.TIM_Period = Encoder_TIM_Period;         // 重装载值，不可大于65535 因为F103的定时器是16位的
 	TIM_TimeBaseInitStructure.TIM_Prescaler =1-1;                      // 分频系数1，即不分频
-	TIM_TimeBaseInit(Tim_E2B_E2A,&TIM_TimeBaseInitStructure);
+	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseInitStructure);
 
 	// 编码器配置
-	TIM_EncoderInterfaceConfig(Tim_E2B_E2A, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising); //使用编码器模式3,进行4倍频		
+	TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising); //使用编码器模式3,进行4倍频		
 	TIM_ICStructInit(&TIM_ICInitStructure); 
-	TIM_ICInitStructure.TIM_ICFilter = 0;   			//输入通道的滤波参数
-	TIM_ICInit(Tim_E2B_E2A, &TIM_ICInitStructure);		//输入通道初始化		
-	TIM_ClearFlag(Tim_E2B_E2A, TIM_FLAG_Update);		//清除TIM的更新标志位，更新标志是由于CNT计数到arr产生的
-	TIM_ITConfig(Tim_E2B_E2A, TIM_IT_Update, ENABLE);	//使能定时器中断	
-	TIM_SetCounter(Tim_E2B_E2A,0);						//设定计数器的初值为0	
-	TIM_Cmd(Tim_E2B_E2A,ENABLE);						//使能控制定时器，计数器开始计数
+	TIM_ICInitStructure.TIM_ICFilter = 0;   	//输入通道的滤波参数
+	TIM_ICInit(TIM3, &TIM_ICInitStructure);		//输入通道初始化	
+	
+	TIM_ClearFlag(TIM3, TIM_FLAG_Update);		//清除TIM的更新标志位，更新标志是由于CNT计数到arr产生的
+	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);	//使能定时器中断	
+	TIM_SetCounter(TIM3,0);						//设定计数器的初值为0	
+	TIM_Cmd(TIM3,ENABLE);						//使能控制定时器，计数器开始计数
 }
 
 /*
@@ -157,7 +144,7 @@ void TIM2_IRQHandler(void)
 	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)	//如果TIM2的CNT计数计数到arr，将产生更新中断
 	{
 		Encoder_Timer_Overflow_L++;	//溢出次数
-		TIM_SetCounter(TIM2,0);			//当发生溢出时，对CNT清0
+		TIM_SetCounter(TIM2,0);		//当发生溢出时，对CNT清0
 	}
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
 }
