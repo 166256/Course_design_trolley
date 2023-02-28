@@ -29,3 +29,5 @@
 .\objects\tim_pwm.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 .\objects\tim_pwm.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 .\objects\tim_pwm.o: ..\STM32F10x_FWLib\inc\misc.h
+.\objects\tim_pwm.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
+.\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdio.h

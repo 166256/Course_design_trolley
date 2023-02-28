@@ -1,6 +1,6 @@
 //这是一个利用编码器进行测速的.c文件
 
-#include	"Tim_encoder_speed.h"
+#include "Tim_encoder_speed.h"
 
 volatile int Encoder_Timer_Overflow_L = 0;		//全局变量，记录左编码器溢出次数
 volatile int	Encoder_Timer_Overflow_R = 0;		//全局变量，记录右编码器溢出次数
@@ -139,15 +139,15 @@ vu16 Get_Encoder_Cnt(vu16 TIMx)
 *	返 回 值: 无   
 *********************************************************************************************************
 */
-void TIM2_IRQHandler(void)
-{
-	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)	//如果TIM2的CNT计数计数到arr，将产生更新中断
-	{
-		Encoder_Timer_Overflow_L++;	//溢出次数
-		TIM_SetCounter(TIM2,0);		//当发生溢出时，对CNT清0
-	}
-	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
-}
+//void TIM2_IRQHandler(void)
+//{
+//	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)	//如果TIM2的CNT计数计数到arr，将产生更新中断
+//	{
+//		Encoder_Timer_Overflow_L++;	//溢出次数
+//		TIM_SetCounter(TIM2,0);		//当发生溢出时，对CNT清0
+//	}
+//	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
+//}
 
 /*
 *********************************************************************************************************

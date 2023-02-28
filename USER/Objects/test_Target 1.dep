@@ -112,8 +112,8 @@ I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\string.h)(0x569DEA3A)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\math.h)(0x569DEA3A)
 I (..\HARDWARE\OLED\oledfont.h)(0x639DDA9A)
-F (..\HARDWARE\Encoder_speed\Tim_encoder_speed.c)(0x63FE162D)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\tim_encoder_speed.o --omf_browse .\objects\tim_encoder_speed.crf --depend .\objects\tim_encoder_speed.d)
-I (..\HARDWARE\Encoder_speed\Tim_encoder_speed.h)(0x63FE161E)
+F (..\HARDWARE\Encoder_speed\Tim_encoder_speed.c)(0x63FE1A45)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\tim_encoder_speed.o --omf_browse .\objects\tim_encoder_speed.crf --depend .\objects\tim_encoder_speed.d)
+I (..\HARDWARE\Encoder_speed\Tim_encoder_speed.h)(0x63FE177B)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdint.h)(0x569DEA3A)
@@ -143,8 +143,8 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdio.h)(0x569DEA3A)
-F (..\HARDWARE\Tim_pwm\Tim_pwm.c)(0x63FC1D16)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\tim_pwm.o --omf_browse .\objects\tim_pwm.crf --depend .\objects\tim_pwm.d)
-I (..\HARDWARE\Tim_pwm\Tim_pwm.h)(0x63F9D2B2)
+F (..\HARDWARE\Tim_pwm\Tim_pwm.c)(0x63FE1B0C)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\tim_pwm.o --omf_browse .\objects\tim_pwm.crf --depend .\objects\tim_pwm.d)
+I (..\HARDWARE\Tim_pwm\Tim_pwm.h)(0x63FE198D)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdint.h)(0x569DEA3A)
@@ -173,6 +173,8 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
+I (..\HARDWARE\Encoder_speed\Tim_encoder_speed.h)(0x63FE177B)
+I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdio.h)(0x569DEA3A)
 F (..\HARDWARE\TCRT500L\tcrt500l.c)(0x63FDC7E4)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\tcrt500l.o --omf_browse .\objects\tcrt500l.crf --depend .\objects\tcrt500l.d)
 I (..\HARDWARE\TCRT500L\tcrt500l.h)(0x63FB61CC)
 I (..\SYSTEM\sys\sys.h)(0x617F9B4A)
@@ -247,7 +249,7 @@ I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdio.h)(0x569DEA3A)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\string.h)(0x569DEA3A)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\math.h)(0x569DEA3A)
-F (.\main.c)(0x63FE15D8)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\main.c)(0x63FE1B03)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\stdint.h)(0x569DEA3A)
@@ -287,8 +289,8 @@ I (C:\zlg\KEIL5\keil5\ARM\ARMCC\include\math.h)(0x569DEA3A)
 I (..\HARDWARE\LED\led.h)(0x639DF39E)
 I (..\HARDWARE\OLED\oled.h)(0x63FB4E83)
 I (..\HARDWARE\TCRT500L\tcrt500l.h)(0x63FB61CC)
-I (..\HARDWARE\Encoder_speed\Tim_encoder_speed.h)(0x63FE161E)
-I (..\HARDWARE\Tim_pwm\Tim_pwm.h)(0x63F9D2B2)
+I (..\HARDWARE\Encoder_speed\Tim_encoder_speed.h)(0x63FE177B)
+I (..\HARDWARE\Tim_pwm\Tim_pwm.h)(0x63FE198D)
 F (.\stm32f10x_it.c)(0x63F75BC2)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\adc -I ..\HARDWARE\LED -I ..\HARDWARE\OLED -I ..\HARDWARE\PWM -I ..\USER -I ..\HARDWARE\EXTRA -I ..\HARDWARE\flash -I ..\HARDWARE\DataScope_DP -I ..\HARDWARE\exti -I ..\HARDWARE\TIMER -I ..\HARDWARE\ENCODER -I ..\HARDWARE\CONTROL -I ..\HARDWARE\spi -I ..\HARDWARE\BUZZER -I ..\HARDWARE\Tim_pwm -I ..\HARDWARE\Encoder_speed -I ..\HARDWARE\GPIO -I ..\HARDWARE\TCRT500L -I ..\HARDWARE\adc-I.\RTE\_Target_1-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include-IC:\zlg\KEIL5\keil5\ARM\CMSIS\Include-IC:\zlg\KEIL5\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0-D__UVISION_VERSION="524" -DSTM32F10X_LD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_LD-o .\objects\stm32f10x_it.o --omf_browse .\objects\stm32f10x_it.crf --depend .\objects\stm32f10x_it.d)
 I (stm32f10x_it.h)(0x4D99A59E)
 I (stm32f10x.h)(0x4D783CB4)
