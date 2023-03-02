@@ -4,7 +4,7 @@
 /*
 *********************************************************************************************************
 *	函 数 名: Tim_gpio_config                    
-*	功能说明: 配置Tim	        
+*	功能说明: 配置Tim的GPIO	        
 *	形    参: 无
 *	返 回 值: 无        
 *	说    明：采用PA8和PA11输出PWM信号，分别对应TIM1_CH1和TIM1_CH4
@@ -77,8 +77,15 @@ void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 	TIM_ARRPreloadConfig(timer,ENABLE); //使能定时器TIMx在ARR上的预装载寄存器
 	TIM_Cmd(timer,ENABLE);				//使能定时器TIMx
 }
-
-void tim_Init(u16 psc,u16 arr)
+/*
+*********************************************************************************************************
+*	函 数 名: tim2_init                    
+*	功能说明: 配置定时器2，使其以100ms为周期进入中断	        
+*	形    参: 无
+*	返 回 值: 无        
+*********************************************************************************************************
+*/
+void tim2_init(u16 psc,u16 arr)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -101,7 +108,14 @@ void tim_Init(u16 psc,u16 arr)
 
 	TIM_Cmd(TIM2, ENABLE);  				 
 }
-
+/*
+*********************************************************************************************************
+*	函 数 名: TIM2_IRQHandler                    
+*	功能说明: 周期为100ms的定时器2中断函数，读取右轮编码器值并测速	        
+*	形    参: 无
+*	返 回 值: 无        
+*********************************************************************************************************
+*/
 void TIM2_IRQHandler(void)	
 {
 	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)  // 中断标志位置1

@@ -41,3 +41,5 @@
 .\objects\main.o: ..\HARDWARE\TCRT500L\tcrt500l.h
 .\objects\main.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
 .\objects\main.o: ..\HARDWARE\Tim_pwm\Tim_pwm.h
+.\objects\main.o: ..\HARDWARE\CONTROL\control.h
+.\objects\main.o: ..\HARDWARE\MPU9250\mpu9250.h
