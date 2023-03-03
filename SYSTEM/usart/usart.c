@@ -1,7 +1,14 @@
 #include "sys.h"
-#include "usart.h"	  
+#include "usart.h"	
 
-volatile unsigned char usart_flag;          //蓝牙接收到的数据
+extern unsigned int K;
+unsigned int Kp,Ki,Kd,Speed;
+unsigned char checksum = 0;
+unsigned char usart1_status = 0;
+unsigned char decode_data[RECEIVE_NUM] = {0};
+unsigned char num = 0;
+unsigned char packet_data[SENT_DATA] = {0};
+
 void uart1_init(u32 bound){
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -44,13 +51,35 @@ void usart1_sendbyte(uint8_t data)
 	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
 }
 
-extern unsigned int K;
-unsigned int Kp,Ki,Kd,speed;
-unsigned char checksum = 0;
-unsigned char usart1_status = 0;
-unsigned char Data[MAX_NUM] = {0};
-unsigned char num = 0;
-void deal_bluedata(unsigned char data)
+void packet_bluedata(int speed)
+{
+	// 包头包尾
+	packet_data[0] = 0xA5;
+	packet_data[SENT_DATA - 1] = 0x5A;
+	
+	// 要发送的数据
+	packet_data[1] = speed & 0x0F;
+	packet_data[2] = speed & 0xF0;
+	
+	// 校验位
+	packet_data[SENT_DATA - 2] = packet_data[1] + packet_data[2];
+	
+	// 发送
+	for(unsigned char i = 0; i < SENT_DATA; i++)
+	{
+		usart1_sendbyte(packet_data[i]);
+	}
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: decode_bluedata                    
+*	功能说明: 使用状态机接收蓝牙上位机发送的数据包，并进行解包
+*	形    参: data 串口1接收的数据
+*	返 回 值: 无    
+*********************************************************************************************************
+*/
+void decode_bluedata(unsigned char data)
 {
 	switch(usart1_status)
 	{
@@ -58,23 +87,23 @@ void deal_bluedata(unsigned char data)
 			if(data == 0xA5)
 			{
 				usart1_status = 1;
-				Data[0] = data;
+				decode_data[0] = data;
 				num = 1;
 			}
 			break;
 		case 1: // 采集数据
-			if(num == MAX_NUM ) // 采集完了一个数据包
+			if(num == RECEIVE_NUM ) // 采集完了一个数据包
 			{ 
-				if(Data[0] == 0xA5 && Data[MAX_NUM -1] == 0x5A) // 包头包尾正确
+				if(decode_data[0] == 0xA5 && decode_data[RECEIVE_NUM -1] == 0x5A) // 包头包尾正确
 				{
-					for(unsigned char i = 1;i < MAX_NUM - 2;i++) // 计算校验和
-						checksum += Data[i];
-					if(checksum == Data[MAX_NUM -2]) // 校验正确
+					for(unsigned char i = 1;i < RECEIVE_NUM - 2;i++) // 计算校验和
+						checksum += decode_data[i];
+					if(checksum == decode_data[RECEIVE_NUM -2]) // 校验正确
 					{
-						Kp = Data[1];
-						Ki = Data[2];
-						Kd = Data[3];
-						speed = Data[4] | Data[5] << 8 ;
+						Kp = decode_data[1];
+						Ki = decode_data[2];
+						Kd = decode_data[3];
+						Speed = decode_data[4] | decode_data[5] << 8 ;
 					}
 					checksum = 0;
 				}
@@ -82,14 +111,21 @@ void deal_bluedata(unsigned char data)
 			} 
 			else
 			{
-				Data[num] = data;
+				decode_data[num] = data;
 				num++;
 			}
 			break;
 		default:break;
 	}
 }
-
+/*
+*********************************************************************************************************
+*	函 数 名: USART1_IRQHandler                    
+*	功能说明: 串口1接收函数，接收蓝牙上位机发送的数据包   
+*	形    参: 无
+*	返 回 值: 无    
+*********************************************************************************************************
+*/
 void USART1_IRQHandler(void)                	
 {      
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  
@@ -97,14 +133,24 @@ void USART1_IRQHandler(void)
 		USART_ClearFlag(USART1, USART_FLAG_RXNE);
 		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		unsigned char recvbyte = USART_ReceiveData(USART1);	
-		deal_bluedata(recvbyte);
+		decode_bluedata(recvbyte);
 	}
-	
 	if(USART_GetITStatus(USART1,USART_IT_IDLE)!=RESET)
 	{	
-		USART_ReceiveData(USART1);	        //查阅参考手册 软件序列清除标志位流程
+		USART_ReceiveData(USART1);	//查阅参考手册 软件序列清除标志位流程
 	}
-
 } 
+
+///重定向c库函数printf到串口，重定向后可使用printf函数
+int fputc(int ch, FILE *f)
+{
+	/* 发送一个字节数据到串口 */
+	USART_SendData(USART1, (uint8_t) ch);
+	
+	/* 等待发送完毕 */
+	while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);		
+
+	return (ch);
+}
 
 

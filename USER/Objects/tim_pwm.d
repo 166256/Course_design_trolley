@@ -31,3 +31,11 @@
 .\objects\tim_pwm.o: ..\STM32F10x_FWLib\inc\misc.h
 .\objects\tim_pwm.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
 .\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\tim_pwm.o: ..\HARDWARE\CONTROL\control.h
+.\objects\tim_pwm.o: ..\SYSTEM\sys\sys.h
+.\objects\tim_pwm.o: ..\SYSTEM\delay\delay.h
+.\objects\tim_pwm.o: ..\SYSTEM\sys\sys.h
+.\objects\tim_pwm.o: ..\SYSTEM\usart\usart.h
+.\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h

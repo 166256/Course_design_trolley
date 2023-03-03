@@ -1,5 +1,6 @@
 #include "Tim_pwm.h"
 #include "Tim_encoder_speed.h"
+#include "control.h"
 
 /*
 *********************************************************************************************************
@@ -87,7 +88,7 @@ void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 */
 void tim1_init(u16 psc,u16 arr)
 {
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
@@ -121,6 +122,9 @@ void TIM1_UP_IRQHandler(void)
 	if(TIM_GetITStatus(TIM1,TIM_IT_Update)==SET)  // 中断标志位置1
 	{
 		calc_motor_Right_rotate_speed();
+		calc_motor_Left_rotate_speed();
+		AutoReloadCallbackR();
+		AutoReloadCallbackL();
 	}
 	TIM_ClearITPendingBit(TIM1,TIM_IT_Update);		//清除中断标志位
 }

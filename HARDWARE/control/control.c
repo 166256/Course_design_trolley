@@ -1,53 +1,92 @@
 #include "control.h"
 #include "Tim_encoder_speed.h"
+#include "usart.h"
 
 extern char L2,L1,M0,R1,R2;
+extern unsigned int Kp,Ki,Kd,Speed;
+extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 0;
-unsigned int K = 1;
-PID pid;
+unsigned char v_offset = 40;
+short v_basic = 300;
+PID pid_L,pid_R;
+int num_L,num_M,num_R;
 
 void moter_control()
 {
-	switch(status)
+	if(L1 == 1)
 	{
-		case 0:
-			if(L1 == 0)
-			{
-				status = 1;
-				// 左慢右快
-				TIM_SetCompare2(TIM4,INITIAL_SPEED - OFFSET * K); // 左轮
-				TIM_SetCompare4(TIM4,INITIAL_SPEED + OFFSET * K); // 右轮
-			}
-			else if(R1 == 0)
-			{
-				status = 1;
-				// 右慢左快
-				TIM_SetCompare2(TIM4,INITIAL_SPEED + OFFSET * K);
-				TIM_SetCompare4(TIM4,INITIAL_SPEED - OFFSET * K);
-			}
-			break;
-		case 1:
-			if(M0 == 0)
-			{
-				status = 0;
-				// 恢复
-				TIM_SetCompare2(TIM4,INITIAL_SPEED);
-				TIM_SetCompare4(TIM4,INITIAL_SPEED);
-			}
-			break;
-		default:break;
+		status = 1;
+		// 左慢右快
+		pid_L.target_val = v_basic - v_offset;
+		pid_R.target_val = v_basic + v_offset;
+		num_L++;
+//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);
 	}
+	if(R1 == 1)
+	{
+		status = 1;
+		// 右慢左快
+		pid_L.target_val = v_basic + v_offset;
+		pid_R.target_val = v_basic - v_offset;
+		num_R++;
+//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);
+	}
+	if(M0 == 1)
+	{
+		status = 0;
+		// 恢复
+		pid_L.target_val = v_basic;
+		pid_R.target_val = v_basic;
+		num_M++;
+//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);		
+	}
+//	switch(status)
+//	{
+//		case 0:
+//			if(L1 == 0)
+//			{
+//				status = 1;
+//				// 左慢右快
+//				pid_L.target_val = v_basic - v_offset;
+//				pid_R.target_val = v_basic + v_offset;
+//			}
+//			else if(R1 == 0)
+//			{
+//				status = 1;
+//				// 右慢左快
+//				pid_L.target_val = v_basic + v_offset;
+//				pid_R.target_val = v_basic - v_offset;
+//			}
+//			break;
+//		case 1:
+//			if(M0 == 0)
+//			{
+//				status = 0;
+//				// 恢复
+//				pid_L.target_val = v_basic;
+//				pid_R.target_val = v_basic;
+//			}
+//			break;
+//		default:break;
+//	}
+
 }
 
 void PID_Init()
 {
-	pid.Kp = 0;
-	pid.Ki = 0;
-	pid.Kd = 0;
+	pid_R.Kp = 2;
+//	pid.Ki = 0;
+//	pid.Kd = 0;
+	
+	pid_L.Kp = 2;
+//	pid_L.Ki = Ki;
+//	pid_L.Kd = Kd;
+	
+//	v_offset = Speed;
 }
 
-float PID_realize(float actual_val)
+int PID_realize(int actual_val,PID pid)
 {
 	/*计算目标值与实际值的误差*/
 	pid.err = pid.target_val - actual_val;
@@ -67,46 +106,50 @@ float PID_realize(float actual_val)
 	return pid.output_val;
 }
 
+int res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
+int old_pwm_R = 0,old_pwm_L = 0;
 //周期定时器的回调函数
 void AutoReloadCallbackR()
 {
-	float sum = 0;/*编码器值（PID输入）*/
-	int res_pwm = 0;/*PWM值（PID输出）*/
+	int sum = 0;/*编码器值（PID输入）*/
 	
     /* 读取编码器测量的速度值 */
-	sum = calc_motor_Right_rotate_speed();
+	sum = encoderNum_R;
     /*进行PID运算，得到PWM输出值*/
-    res_pwm = PID_realize(sum);
+    res_pwm_R = PID_realize(sum, pid_R);
+	res_pwm_R += old_pwm_R;
+	old_pwm_R = res_pwm_R;
 	
-	if(res_pwm > 3500)
-		res_pwm = 3500;
-	else if(res_pwm < 1000)
-		res_pwm = 1000;
+	if(res_pwm_R > 3500)
+		res_pwm_R = 3500;
+	else if(res_pwm_R < 1000)
+		res_pwm_R = 1000;
 	/*根据PWM值控制电机转动*/
-	TIM_SetCompare4(TIM4,res_pwm);
+	TIM_SetCompare4(TIM4,res_pwm_R);
 	
     /*给上位机通道1发送实际值*/
-//	set_computer_value(SEND_FACT_CMD, CURVES_CH1, &sum, 1); 
+//	packet_bluedata(sum);
 }
 
 //周期定时器的回调函数
 void AutoReloadCallbackL()
 {
 	float sum = 0;/*编码器值（PID输入）*/
-	int res_pwm = 0;/*PWM值（PID输出）*/
 	
     /* 读取编码器测量的速度值 */
-	sum = calc_motor_Left_rotate_speed();
+	sum = encoderNum_L;
     /*进行PID运算，得到PWM输出值*/
-    res_pwm = PID_realize(sum);
+    res_pwm_L = PID_realize(sum, pid_L);
+	res_pwm_L += old_pwm_L;
+	old_pwm_L = res_pwm_L;
 	
-	if(res_pwm > 3500)
-		res_pwm = 3500;
-	else if(res_pwm < 1000)
-		res_pwm = 1000;
+	if(res_pwm_L > 3500)
+		res_pwm_L = 3500;
+	else if(res_pwm_L < 1000)
+		res_pwm_L = 1000;
 	/*根据PWM值控制电机转动*/
-	TIM_SetCompare2(TIM4,res_pwm);
+	TIM_SetCompare2(TIM4,res_pwm_L);
 	
     /*给上位机通道1发送实际值*/
-//	set_computer_value(SEND_FACT_CMD, CURVES_CH1, &sum, 1); 
+//	packet_bluedata(sum);
 }

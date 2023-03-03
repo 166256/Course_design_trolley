@@ -3,9 +3,11 @@
 #include "stdio.h"	
 #include "sys.h" 
 
-#define MAX_NUM	8
+#define RECEIVE_NUM	8
+#define SENT_DATA	5
 
 void uart1_init(u32 bound);
 void usart1_sendbyte(uint8_t data);
+void packet_bluedata(int speed);
 
 #endif

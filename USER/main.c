@@ -13,6 +13,9 @@
 
 //#include "adc.h"
 
+extern PID pid_L,pid_R;
+extern short v_basic;
+
 char L2=1,L1=1,M0=1,R1=1,R2=1;
 
 int main (void)
@@ -32,13 +35,18 @@ int main (void)
 	PWM_Start(TIM4,4,11,30);	//右轮
 	
 	TIM_SetCompare1(TIM4,0);
-	TIM_SetCompare2(TIM4,2100);
+	TIM_SetCompare2(TIM4,2000);
 	TIM_SetCompare3(TIM4,0);
 	TIM_SetCompare4(TIM4,2000);
+	
+	pid_L.target_val = v_basic;
+	pid_R.target_val = v_basic;
 
 	Tim_EncoderR_Init();		//右轮编码器
 	Tim_EncoderL_Init();
 //	ADC_Configuration();
+
+	MPU9250_Init();
 	
 /**********************************************/
 
@@ -49,25 +57,30 @@ int main (void)
 	
 	while(1)
 	{
-		USART_SendData(USART1,0x05);
+//		USART_SendData(USART1,0x05);
 		L2 = TCRT_L2;
 		L1 = TCRT_L1;
 		M0 = TCRT_M0;
 		R1 = TCRT_R1;
 		R2 = TCRT_R2;
 		
-		OLED_ShowNum(8*8,0,L2,1,1);
-		OLED_ShowNum(8*8,2,L1,1,1);
-		OLED_ShowNum(8*8,4,R1,1,1);
-		OLED_ShowNum(8*8,6,R2,1,1);
+//		OLED_ShowNum(8*8,0,L2,1,1);
+//		OLED_ShowNum(8*8,2,L1,1,1);
+//		OLED_ShowNum(8*8,4,R1,1,1);
+//		OLED_ShowNum(8*8,6,R2,1,1);
 		
 //		delay_ms(500);	
 //		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
 //		delay_ms(500);	
 //		GPIO_SetBits(GPIOA,GPIO_Pin_4);
-		delay_ms(100);
-		calc_motor_Right_rotate_speed();
-		calc_motor_Left_rotate_speed();
+		delay_ms(10);
+		
+//		MPU_Get_Accelerometer(&aacx,&aacy,&aacz);	//得到加速度传感器数据
+//		MPU_Get_Gyroscope(&gyrox,&gyroy,&gyroz);	//得到陀螺仪数据
+//		MPU_Get_Magnetometer(&mx,&my,&mz);	
+		
+		PID_Init();
+		moter_control();
 	}	
 }	
 

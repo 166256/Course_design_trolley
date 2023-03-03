@@ -17,6 +17,6 @@ void Tim_EncoderR_Init(void);
 vu16 Get_Encoder_Cnt(vu16	TIMx);
 void TIM2_IRQHandler(void);
 void TIM3_IRQHandler(void);
-float calc_motor_Left_rotate_speed(void);
-float calc_motor_Right_rotate_speed(void);
+int calc_motor_Left_rotate_speed(void);
+int calc_motor_Right_rotate_speed(void);
 #endif

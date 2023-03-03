@@ -176,13 +176,14 @@ void TIM3_IRQHandler(void)
 *	说    明：当全局变量time==Tim_time时调用一次该函数
 *********************************************************************************************************
 */
-float calc_motor_Left_rotate_speed(void)
+int calc_motor_Left_rotate_speed(void)
 {	
 	/*读取编码器的值，正负代表旋转方向，溢出次数要加上去*/
 	encoderNum_L = Get_Encoder_Cnt(2)+(65535*Encoder_Timer_Overflow_L);
 	/* 转速(1秒钟转多少圈)=单位时间内(100ms)的计数值/总分辨率*时间系数,总分辨率即车轮转过一圈的脉冲数，时间系数是1000ms/定时时长 */
 	rotateSpeed_L = (float)encoderNum_L/Total_Resolution*(1000/Tim_time);
-	return rotateSpeed_L;
+	encoderNum_L = -encoderNum_L;
+	return encoderNum_L;
 }
 
 /*
@@ -195,12 +196,12 @@ float calc_motor_Left_rotate_speed(void)
 			  该车辆右轮存在一定的问题，导致需要使用630减掉计数值才能得到转速
 *********************************************************************************************************
 */
-float calc_motor_Right_rotate_speed(void)
+int calc_motor_Right_rotate_speed(void)
 {
 	// 读取编码器的值，正负代表旋转方向，溢出次数要加上去
 	encoderNum_R = Get_Encoder_Cnt(3)+(65535*Encoder_Timer_Overflow_R);
 	// 转速(1秒钟转多少圈)=单位时间内(100ms)的计数值/总分辨率*时间系数,总分辨率即车轮转过一圈的脉冲数，时间系数是1000ms/定时时长
 	//rotateSpeed_R = (float)encoderNum_R/Total_Resolution*(1000/Tim_time);
 	rotateSpeed_R = (float)encoderNum_R/Total_Resolution*(1000/Tim_time);
-	return rotateSpeed_R;
+	return encoderNum_R;
 }
