@@ -32,7 +32,8 @@ void uart1_init(u32 bound){
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;					// 收发模式
 
 	USART_Init(USART1, &USART_InitStructure); 		// 初始化串口1
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);	// 开启串口接受中断
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);	// 使能串口接受中断
+	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);	// 使能串口空闲中断
 	USART_Cmd(USART1, ENABLE);                    	// 使能串口1 
 }
 
@@ -44,8 +45,10 @@ void usart1_sendbyte(uint8_t data)
 }
 
 extern unsigned int K;
+unsigned int Kp,Ki,Kd,speed;
+unsigned char checksum = 0;
 unsigned char usart1_status = 0;
-unsigned char Data[4] = {0};
+unsigned char Data[MAX_NUM] = {0};
 unsigned char num = 0;
 void deal_bluedata(unsigned char data)
 {
@@ -55,15 +58,26 @@ void deal_bluedata(unsigned char data)
 			if(data == 0xA5)
 			{
 				usart1_status = 1;
-				Data[num] = data;
-				num++;
+				Data[0] = data;
+				num = 1;
 			}
 			break;
 		case 1: // 采集数据
-			if(num == 4) // 采集完了一个数据包
+			if(num == MAX_NUM ) // 采集完了一个数据包
 			{ 
-				if(Data[0] == 0xA5 && Data[3] == 0x5A && Data[1] == Data[2]) // 校验正确
-					K = Data[1];
+				if(Data[0] == 0xA5 && Data[MAX_NUM -1] == 0x5A) // 包头包尾正确
+				{
+					for(unsigned char i = 1;i < MAX_NUM - 2;i++) // 计算校验和
+						checksum += Data[i];
+					if(checksum == Data[MAX_NUM -2]) // 校验正确
+					{
+						Kp = Data[1];
+						Ki = Data[2];
+						Kd = Data[3];
+						speed = Data[4] | Data[5] << 8 ;
+					}
+					checksum = 0;
+				}
 				usart1_status = 0;
 			} 
 			else
@@ -77,13 +91,20 @@ void deal_bluedata(unsigned char data)
 }
 
 void USART1_IRQHandler(void)                	
-{
+{      
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  
 	{
+		USART_ClearFlag(USART1, USART_FLAG_RXNE);
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 		unsigned char recvbyte = USART_ReceiveData(USART1);	
 		deal_bluedata(recvbyte);
 	}
-	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+	
+	if(USART_GetITStatus(USART1,USART_IT_IDLE)!=RESET)
+	{	
+		USART_ReceiveData(USART1);	        //查阅参考手册 软件序列清除标志位流程
+	}
+
 } 
 
 

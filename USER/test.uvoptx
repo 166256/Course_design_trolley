@@ -178,7 +178,7 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>aacx</ItemText>
+          <ItemText>K,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
@@ -214,6 +214,31 @@
           <count>11</count>
           <WinNumber>1</WinNumber>
           <ItemText>ADC_DMA_ConvertedValues[3],0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Kp,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Ki,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Kd,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>speed,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Data,0x10</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

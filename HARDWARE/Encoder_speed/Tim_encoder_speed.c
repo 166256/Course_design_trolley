@@ -3,7 +3,7 @@
 #include "Tim_encoder_speed.h"
 
 volatile int Encoder_Timer_Overflow_L = 0;		//全局变量，记录左编码器溢出次数
-volatile int	Encoder_Timer_Overflow_R = 0;		//全局变量，记录右编码器溢出次数
+volatile int Encoder_Timer_Overflow_R = 0;		//全局变量，记录右编码器溢出次数
 
 volatile int16_t encoderNum_L = 0;			
 volatile int16_t encoderNum_R = 0;
@@ -139,15 +139,15 @@ vu16 Get_Encoder_Cnt(vu16 TIMx)
 *	返 回 值: 无   
 *********************************************************************************************************
 */
-//void TIM2_IRQHandler(void)
-//{
-//	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)	//如果TIM2的CNT计数计数到arr，将产生更新中断
-//	{
-//		Encoder_Timer_Overflow_L++;	//溢出次数
-//		TIM_SetCounter(TIM2,0);		//当发生溢出时，对CNT清0
-//	}
-//	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
-//}
+void TIM2_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)	//如果TIM2的CNT计数计数到arr，将产生更新中断
+	{
+		Encoder_Timer_Overflow_L++;	//溢出次数
+		TIM_SetCounter(TIM2,0);		//当发生溢出时，对CNT清0
+	}
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
+}
 
 /*
 *********************************************************************************************************
@@ -176,12 +176,13 @@ void TIM3_IRQHandler(void)
 *	说    明：当全局变量time==Tim_time时调用一次该函数
 *********************************************************************************************************
 */
-void calc_motor_Left_rotate_speed(void)
+float calc_motor_Left_rotate_speed(void)
 {	
 	/*读取编码器的值，正负代表旋转方向，溢出次数要加上去*/
 	encoderNum_L = Get_Encoder_Cnt(2)+(65535*Encoder_Timer_Overflow_L);
 	/* 转速(1秒钟转多少圈)=单位时间内(100ms)的计数值/总分辨率*时间系数,总分辨率即车轮转过一圈的脉冲数，时间系数是1000ms/定时时长 */
 	rotateSpeed_L = (float)encoderNum_L/Total_Resolution*(1000/Tim_time);
+	return rotateSpeed_L;
 }
 
 /*
@@ -194,11 +195,12 @@ void calc_motor_Left_rotate_speed(void)
 			  该车辆右轮存在一定的问题，导致需要使用630减掉计数值才能得到转速
 *********************************************************************************************************
 */
-void calc_motor_Right_rotate_speed(void)
+float calc_motor_Right_rotate_speed(void)
 {
 	// 读取编码器的值，正负代表旋转方向，溢出次数要加上去
 	encoderNum_R = Get_Encoder_Cnt(3)+(65535*Encoder_Timer_Overflow_R);
 	// 转速(1秒钟转多少圈)=单位时间内(100ms)的计数值/总分辨率*时间系数,总分辨率即车轮转过一圈的脉冲数，时间系数是1000ms/定时时长
 	//rotateSpeed_R = (float)encoderNum_R/Total_Resolution*(1000/Tim_time);
 	rotateSpeed_R = (float)encoderNum_R/Total_Resolution*(1000/Tim_time);
+	return rotateSpeed_R;
 }

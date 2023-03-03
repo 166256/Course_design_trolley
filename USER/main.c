@@ -24,19 +24,20 @@ int main (void)
 	delay_ms(1000);				// µÈ´ıÆäËûÉè±¸³õÊ¼»¯¾ÍĞ÷
 	tcrt500l_init();
 	uart1_init(9600);
-	tim2_init(999,7199);
+	tim1_init(999,7199);
 	tim4_gpio_config();
-//	PWM_Start(TIM4,1,11,0);		//×óÂÖ
-//	PWM_Start(TIM4,2,11,30);	//×óÂÖ
-//	PWM_Start(TIM4,3,11,0);		//ÓÒÂÖ
-//	PWM_Start(TIM4,4,11,30);	//ÓÒÂÖ
-//	
-//	TIM_SetCompare1(TIM4,0);
-//	TIM_SetCompare2(TIM4,INITIAL_SPEED);
-//	TIM_SetCompare3(TIM4,0);
-//	TIM_SetCompare4(TIM4,INITIAL_SPEED);
+	PWM_Start(TIM4,1,11,0);		//×óÂÖ
+	PWM_Start(TIM4,2,11,30);	//×óÂÖ
+	PWM_Start(TIM4,3,11,0);		//ÓÒÂÖ
+	PWM_Start(TIM4,4,11,30);	//ÓÒÂÖ
+	
+	TIM_SetCompare1(TIM4,0);
+	TIM_SetCompare2(TIM4,2100);
+	TIM_SetCompare3(TIM4,0);
+	TIM_SetCompare4(TIM4,2000);
 
 	Tim_EncoderR_Init();		//ÓÒÂÖ±àÂëÆ÷
+	Tim_EncoderL_Init();
 //	ADC_Configuration();
 	
 /**********************************************/
@@ -65,7 +66,8 @@ int main (void)
 //		delay_ms(500);	
 //		GPIO_SetBits(GPIOA,GPIO_Pin_4);
 		delay_ms(100);
-		moter_control();
+		calc_motor_Right_rotate_speed();
+		calc_motor_Left_rotate_speed();
 	}	
 }	
 

@@ -85,28 +85,28 @@ void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 *	返 回 值: 无        
 *********************************************************************************************************
 */
-void tim2_init(u16 psc,u16 arr)
+void tim1_init(u16 psc,u16 arr)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 
 	TIM_TimeBaseStructure.TIM_Period = arr;						// 自动重装载值	
 	TIM_TimeBaseStructure.TIM_Prescaler = psc;					// 预分频系数
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;		//设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	//TIM向上计数模式
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); 			//根据指定的参数初始化TIMx的时间基数单位
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure); 			//根据指定的参数初始化TIMx的时间基数单位
  
-	TIM_ITConfig(TIM2,TIM_IT_Update,ENABLE ); 
+	TIM_ITConfig(TIM1,TIM_IT_Update,ENABLE ); 
 
-	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; 
 	NVIC_Init(&NVIC_InitStructure);  
 
-	TIM_Cmd(TIM2, ENABLE);  				 
+	TIM_Cmd(TIM1, ENABLE);  				 
 }
 /*
 *********************************************************************************************************
@@ -116,11 +116,11 @@ void tim2_init(u16 psc,u16 arr)
 *	返 回 值: 无        
 *********************************************************************************************************
 */
-void TIM2_IRQHandler(void)	
+void TIM1_UP_IRQHandler(void)	
 {
-	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET)  // 中断标志位置1
+	if(TIM_GetITStatus(TIM1,TIM_IT_Update)==SET)  // 中断标志位置1
 	{
 		calc_motor_Right_rotate_speed();
 	}
-	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);		//清除中断标志位
+	TIM_ClearITPendingBit(TIM1,TIM_IT_Update);		//清除中断标志位
 }
