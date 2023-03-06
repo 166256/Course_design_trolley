@@ -2,7 +2,7 @@
 #include "usart.h"	
 
 extern unsigned int K;
-unsigned int Kp,Ki,Kd,Speed;
+unsigned int offset1,offset2,K,Speed;
 unsigned char checksum = 0;
 unsigned char usart1_status = 0;
 unsigned char decode_data[RECEIVE_NUM] = {0};
@@ -100,9 +100,9 @@ void decode_bluedata(unsigned char data)
 						checksum += decode_data[i];
 					if(checksum == decode_data[RECEIVE_NUM -2]) // 校验正确
 					{
-						Kp = decode_data[1];
-						Ki = decode_data[2];
-						Kd = decode_data[3];
+						offset1 = decode_data[1];
+						offset2 = decode_data[2];
+						K = decode_data[3];
 						Speed = decode_data[4] | decode_data[5] << 8 ;
 					}
 					checksum = 0;
@@ -140,17 +140,4 @@ void USART1_IRQHandler(void)
 		USART_ReceiveData(USART1);	//查阅参考手册 软件序列清除标志位流程
 	}
 } 
-
-///重定向c库函数printf到串口，重定向后可使用printf函数
-int fputc(int ch, FILE *f)
-{
-	/* 发送一个字节数据到串口 */
-	USART_SendData(USART1, (uint8_t) ch);
-	
-	/* 等待发送完毕 */
-	while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);		
-
-	return (ch);
-}
-
 

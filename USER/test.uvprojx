@@ -430,6 +430,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\control\control.c</FilePath>
             </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\GPIO\gpio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -3,12 +3,11 @@
 #include "usart.h"
 
 extern char L2,L1,M0,R1,R2;
-extern unsigned int Kp,Ki,Kd,Speed;
 extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 0;
-unsigned char v_offset = 40;
-short v_basic = 300;
+unsigned char v_offset1 = 15,v_offset2 = 57;
+short v_basic = 320;
 PID pid_L,pid_R;
 int num_L,num_M,num_R;
 
@@ -16,21 +15,31 @@ void moter_control()
 {
 	if(L1 == 1)
 	{
-		status = 1;
 		// ×óÂýÓÒ¿ì
-		pid_L.target_val = v_basic - v_offset;
-		pid_R.target_val = v_basic + v_offset;
+		pid_L.target_val = v_basic - v_offset1;
+		pid_R.target_val = v_basic + v_offset1;
 		num_L++;
-//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);
+	}
+	if(L2 == 1)
+	{
+		// ×óÂýÓÒ¿ì
+		pid_L.target_val = v_basic - v_offset2;
+		pid_R.target_val = v_basic + v_offset2;
+		num_L++;
 	}
 	if(R1 == 1)
 	{
-		status = 1;
 		// ÓÒÂý×ó¿ì
-		pid_L.target_val = v_basic + v_offset;
-		pid_R.target_val = v_basic - v_offset;
+		pid_L.target_val = v_basic + v_offset1;
+		pid_R.target_val = v_basic - v_offset1;
 		num_R++;
-//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);
+	}
+	if(R2 == 1)
+	{
+		// ÓÒÂý×ó¿ì
+		pid_L.target_val = v_basic + v_offset2;
+		pid_R.target_val = v_basic - v_offset2;
+		num_R++;
 	}
 	if(M0 == 1)
 	{
@@ -38,52 +47,22 @@ void moter_control()
 		// »Ö¸´
 		pid_L.target_val = v_basic;
 		pid_R.target_val = v_basic;
-		num_M++;
-//		printf("L:%d, M:%d, R:%d",num_L,num_M,num_R);		
+		num_M++;	
 	}
-//	switch(status)
-//	{
-//		case 0:
-//			if(L1 == 0)
-//			{
-//				status = 1;
-//				// ×óÂýÓÒ¿ì
-//				pid_L.target_val = v_basic - v_offset;
-//				pid_R.target_val = v_basic + v_offset;
-//			}
-//			else if(R1 == 0)
-//			{
-//				status = 1;
-//				// ÓÒÂý×ó¿ì
-//				pid_L.target_val = v_basic + v_offset;
-//				pid_R.target_val = v_basic - v_offset;
-//			}
-//			break;
-//		case 1:
-//			if(M0 == 0)
-//			{
-//				status = 0;
-//				// »Ö¸´
-//				pid_L.target_val = v_basic;
-//				pid_R.target_val = v_basic;
-//			}
-//			break;
-//		default:break;
-//	}
-
 }
 
 void PID_Init()
-{
+{	
 	pid_R.Kp = 2;
-//	pid.Ki = 0;
-//	pid.Kd = 0;
-	
 	pid_L.Kp = 2;
-//	pid_L.Ki = Ki;
-//	pid_L.Kd = Kd;
-	
-//	v_offset = Speed;
+	pid_L.target_val = v_basic;
+	pid_R.target_val = v_basic;
+}
+
+void offset_modify()
+{
+	v_offset1 = offset1;
+	v_offset2 = offset2;
 }
 
 int PID_realize(int actual_val,PID pid)
@@ -122,8 +101,8 @@ void AutoReloadCallbackR()
 	
 	if(res_pwm_R > 3500)
 		res_pwm_R = 3500;
-	else if(res_pwm_R < 1000)
-		res_pwm_R = 1000;
+	else if(res_pwm_R < 1500)
+		res_pwm_R = 1500;
 	/*¸ù¾ÝPWMÖµ¿ØÖÆµç»ú×ª¶¯*/
 	TIM_SetCompare4(TIM4,res_pwm_R);
 	

@@ -8,13 +8,12 @@
 #include "Tim_encoder_speed.h"
 #include "Tim_pwm.h"
 
+#include "gpio.h"
 #include "control.h"
 #include "mpu9250.h"
 
 //#include "adc.h"
 
-extern PID pid_L,pid_R;
-extern short v_basic;
 
 char L2=1,L1=1,M0=1,R1=1,R2=1;
 
@@ -27,8 +26,14 @@ int main (void)
 	delay_ms(1000);				// 等待其他设备初始化就绪
 	tcrt500l_init();
 	uart1_init(9600);
+	
+	key_gpio_config();
+	while(KEY_SCAN() == 1)
+		delay_ms(20);
+	
 	tim1_init(999,7199);
 	tim4_gpio_config();
+	
 	PWM_Start(TIM4,1,11,0);		//左轮
 	PWM_Start(TIM4,2,11,30);	//左轮
 	PWM_Start(TIM4,3,11,0);		//右轮
@@ -39,8 +44,8 @@ int main (void)
 	TIM_SetCompare3(TIM4,0);
 	TIM_SetCompare4(TIM4,2000);
 	
-	pid_L.target_val = v_basic;
-	pid_R.target_val = v_basic;
+	PID_Init();
+
 
 	Tim_EncoderR_Init();		//右轮编码器
 	Tim_EncoderL_Init();
@@ -78,8 +83,11 @@ int main (void)
 //		MPU_Get_Accelerometer(&aacx,&aacy,&aacz);	//得到加速度传感器数据
 //		MPU_Get_Gyroscope(&gyrox,&gyroy,&gyroz);	//得到陀螺仪数据
 //		MPU_Get_Magnetometer(&mx,&my,&mz);	
-		
-		PID_Init();
+
+		if(offset1 != 0 || offset2 != 0)
+		{
+			offset_modify();
+		}
 		moter_control();
 	}	
 }	

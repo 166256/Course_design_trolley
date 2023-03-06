@@ -15,8 +15,12 @@ typedef struct
 	int output_val;   // Êä³öÖµ
 }PID;
 
+extern short v_basic;
+extern PID pid_L,pid_R;
+
 void moter_control(void);
 void PID_Init(void);
+void offset_modify(void);
 void AutoReloadCallbackR(void);
 void AutoReloadCallbackL(void);
 
