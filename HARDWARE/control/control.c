@@ -6,7 +6,7 @@ extern char L2,L1,M0,R1,R2;
 extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 0;
-unsigned char v_offset1 = 15,v_offset2 = 57;
+unsigned char v_offset1 = 13,v_offset2 = 27,v_offset3 = 57;
 short v_basic = 320;
 PID pid_L,pid_R;
 int num_L,num_M,num_R;
@@ -15,6 +15,7 @@ void moter_control()
 {
 	if(L1 == 1)
 	{
+		status = 0;
 		// ×óÂıÓÒ¿ì
 		pid_L.target_val = v_basic - v_offset1;
 		pid_R.target_val = v_basic + v_offset1;
@@ -22,6 +23,7 @@ void moter_control()
 	}
 	if(L2 == 1)
 	{
+		status = 2;
 		// ×óÂıÓÒ¿ì
 		pid_L.target_val = v_basic - v_offset2;
 		pid_R.target_val = v_basic + v_offset2;
@@ -29,6 +31,7 @@ void moter_control()
 	}
 	if(R1 == 1)
 	{
+		status = 0;
 		// ÓÒÂı×ó¿ì
 		pid_L.target_val = v_basic + v_offset1;
 		pid_R.target_val = v_basic - v_offset1;
@@ -36,6 +39,7 @@ void moter_control()
 	}
 	if(R2 == 1)
 	{
+		status = 1;
 		// ÓÒÂı×ó¿ì
 		pid_L.target_val = v_basic + v_offset2;
 		pid_R.target_val = v_basic - v_offset2;
@@ -49,12 +53,26 @@ void moter_control()
 		pid_R.target_val = v_basic;
 		num_M++;	
 	}
+	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
+	{
+		if(status == 1) // ÓÒ
+		{
+			pid_L.target_val = v_basic + v_offset3;
+			pid_R.target_val = v_basic - v_offset3;
+		}
+		if(status == 2) // ×ó
+		{
+			pid_L.target_val = v_basic - v_offset3;
+			pid_R.target_val = v_basic + v_offset3;
+		}
+	}
+	packet_bluedata(status);
 }
 
 void PID_Init()
 {	
-	pid_R.Kp = 2;
-	pid_L.Kp = 2;
+	pid_R.Kp = 2.5;
+	pid_L.Kp = 2.5;
 	pid_L.target_val = v_basic;
 	pid_R.target_val = v_basic;
 }
@@ -63,6 +81,8 @@ void offset_modify()
 {
 	v_offset1 = offset1;
 	v_offset2 = offset2;
+	v_offset3 = offset3;
+	v_basic = Speed;
 }
 
 int PID_realize(int actual_val,PID pid)

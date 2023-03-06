@@ -2,7 +2,7 @@
 #include "usart.h"	
 
 extern unsigned int K;
-unsigned int offset1,offset2,K,Speed;
+unsigned int offset1,offset2,offset3,Speed;
 unsigned char checksum = 0;
 unsigned char usart1_status = 0;
 unsigned char decode_data[RECEIVE_NUM] = {0};
@@ -102,7 +102,7 @@ void decode_bluedata(unsigned char data)
 					{
 						offset1 = decode_data[1];
 						offset2 = decode_data[2];
-						K = decode_data[3];
+						offset3 = decode_data[3];
 						Speed = decode_data[4] | decode_data[5] << 8 ;
 					}
 					checksum = 0;
