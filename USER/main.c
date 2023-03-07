@@ -31,7 +31,7 @@ int main (void)
 	while(KEY_SCAN() == 1)
 		delay_ms(20);
 	
-	tim1_init(999,7199);
+	tim1_init(99,7199);			// 10ms中断一次
 	tim4_gpio_config();
 	
 	PWM_Start(TIM4,1,11,0);		//左轮
@@ -45,7 +45,6 @@ int main (void)
 	TIM_SetCompare4(TIM4,2000);
 	
 	PID_Init();
-
 
 	Tim_EncoderR_Init();		//右轮编码器
 	Tim_EncoderL_Init();
@@ -61,34 +60,35 @@ int main (void)
 	OLED_ShowString(0,6,"TCRT_R2:");
 	
 	while(1)
-	{
-//		USART_SendData(USART1,0x05);
-		L2 = TCRT_L2;
-		L1 = TCRT_L1;
-		M0 = TCRT_M0;
-		R1 = TCRT_R1;
-		R2 = TCRT_R2;
-		
+	{		
 //		OLED_ShowNum(8*8,0,L2,1,1);
 //		OLED_ShowNum(8*8,2,L1,1,1);
 //		OLED_ShowNum(8*8,4,R1,1,1);
 //		OLED_ShowNum(8*8,6,R2,1,1);
 		
-//		delay_ms(500);	
-//		GPIO_ResetBits(GPIOA,GPIO_Pin_4);
-//		delay_ms(500);	
-//		GPIO_SetBits(GPIOA,GPIO_Pin_4);
-		delay_ms(10);
-		
-//		MPU_Get_Accelerometer(&aacx,&aacy,&aacz);	//得到加速度传感器数据
-//		MPU_Get_Gyroscope(&gyrox,&gyroy,&gyroz);	//得到陀螺仪数据
-//		MPU_Get_Magnetometer(&mx,&my,&mz);	
-
-		if(offset1 != 0 || offset2 != 0)
+		if(tim1_flag == 1)
 		{
-			offset_modify();
+			L2 = TCRT_L2;
+			L1 = TCRT_L1;
+			M0 = TCRT_M0;
+			R1 = TCRT_R1;
+			R2 = TCRT_R2;
+
+			if(offset1 != 0 || offset2 != 0)
+			{
+				offset_modify();
+			}
+			moter_control();			
 		}
-		moter_control();
+		if(tim1_num1 >= 10)
+		{
+			calc_motor_Right_rotate_speed();
+			calc_motor_Left_rotate_speed();
+			AutoReloadCallbackR();
+			AutoReloadCallbackL();
+			tim1_num1 = 0;
+		}
+		
 	}	
 }	
 

@@ -6,73 +6,80 @@ extern char L2,L1,M0,R1,R2;
 extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 0;
-unsigned char v_offset1 = 13,v_offset2 = 27,v_offset3 = 57;
-short v_basic = 320;
+unsigned char first = 2,second = 2, third = 2;	// ³õÊ¼×´Ì¬¶¼ÊÇÖĞ¼ä
+unsigned char v_offset1 = 13,v_offset2 = 33,v_offset3 = 63;
+short v_basic = 400;
 PID pid_L,pid_R;
 int num_L,num_M,num_R;
 
+unsigned char motor_buffer[5];
+
 void moter_control()
 {
-	if(L1 == 1)
-	{
-		status = 0;
-		// ×óÂıÓÒ¿ì
-		pid_L.target_val = v_basic - v_offset1;
-		pid_R.target_val = v_basic + v_offset1;
-		num_L++;
-	}
-	if(L2 == 1)
+	if(M0 == 1 && (L1 || L2 || R1 || R2) == 0)
 	{
 		status = 2;
-		// ×óÂıÓÒ¿ì
-		pid_L.target_val = v_basic - v_offset2;
-		pid_R.target_val = v_basic + v_offset2;
-		num_L++;
-	}
-	if(R1 == 1)
-	{
-		status = 0;
-		// ÓÒÂı×ó¿ì
-		pid_L.target_val = v_basic + v_offset1;
-		pid_R.target_val = v_basic - v_offset1;
-		num_R++;
-	}
-	if(R2 == 1)
-	{
-		status = 1;
-		// ÓÒÂı×ó¿ì
-		pid_L.target_val = v_basic + v_offset2;
-		pid_R.target_val = v_basic - v_offset2;
-		num_R++;
-	}
-	if(M0 == 1)
-	{
-		status = 0;
 		// »Ö¸´
 		pid_L.target_val = v_basic;
 		pid_R.target_val = v_basic;
-		num_M++;	
 	}
+	else if(L1 == 1 && (M0 || L2 || R1 || R2) == 0)
+	{
+		status = 1;
+		// ×óÂıÓÒ¿ì
+		pid_L.target_val = v_basic - v_offset1;
+		pid_R.target_val = v_basic + v_offset1;
+	}
+	else if(L2 == 1 && (L1 || M0 || R1 || R2) == 0)
+	{
+		status = 0;
+		// ×óÂıÓÒ¿ì
+		pid_L.target_val = v_basic - v_offset2;
+		pid_R.target_val = v_basic + v_offset2;
+	}
+	else if(R1 == 1 && (L1 || L2 || M0 || R2) == 0)
+	{
+		status = 3;
+		// ÓÒÂı×ó¿ì
+		pid_L.target_val = v_basic + v_offset1;
+		pid_R.target_val = v_basic - v_offset1;
+	}
+	else if(R2 == 1 && (L1 || L2 || R1 || M0) == 0)
+	{
+		status = 4;
+		// ÓÒÂı×ó¿ì
+		pid_L.target_val = v_basic + v_offset2;
+		pid_R.target_val = v_basic - v_offset2;
+	}
+	
 	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
 	{
-		if(status == 1) // ÓÒ
+		if(status == 4) // ÓÒ
 		{
-			pid_L.target_val = v_basic + v_offset3;
-			pid_R.target_val = v_basic - v_offset3;
+			pid_L.target_val = v_basic + 1.2 * v_offset3;
+			pid_R.target_val = v_basic - 1.2 * v_offset3;
 		}
-		if(status == 2) // ×ó
+		else if(status == 0) // ×ó
 		{
-			pid_L.target_val = v_basic - v_offset3;
-			pid_R.target_val = v_basic + v_offset3;
+			pid_L.target_val = v_basic - 1.2 * v_offset3;
+			pid_R.target_val = v_basic + 1.2 * v_offset3;		
 		}
 	}
-	packet_bluedata(status);
+	
+	motor_buffer[0] = L2;
+	motor_buffer[1] = L1;
+	motor_buffer[2] = M0;
+	motor_buffer[3] = R1;
+	motor_buffer[4] = R2;
+	motor_buffer[5] = status;
+	packet_bluedata(motor_buffer);
 }
 
 void PID_Init()
 {	
-	pid_R.Kp = 2.5;
-	pid_L.Kp = 2.5;
+	pid_R.Kp = 3;
+//	pid_R.Ki = 0.1;
+	pid_L.Kp = 3;
 	pid_L.target_val = v_basic;
 	pid_R.target_val = v_basic;
 }

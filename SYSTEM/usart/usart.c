@@ -51,24 +51,26 @@ void usart1_sendbyte(uint8_t data)
 	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
 }
 
-void packet_bluedata(int speed)
+void packet_bluedata(unsigned char buffer[SENT_DATA - 3])
 {
 	// 包头包尾
 	packet_data[0] = 0xA5;
 	packet_data[SENT_DATA - 1] = 0x5A;
 	
-	// 要发送的数据
-	packet_data[1] = speed & 0x0F;
-	packet_data[2] = speed & 0xF0;
+	// 填装
+	for(unsigned char i = 0; i < (SENT_DATA - 3); i++)
+		packet_data[i+1] = buffer[i];
 	
 	// 校验位
-	packet_data[SENT_DATA - 2] = packet_data[1] + packet_data[2];
+	for(unsigned char i = 1; i < (SENT_DATA - 2); i++)
+		packet_data[SENT_DATA - 2] += packet_data[i];
 	
 	// 发送
 	for(unsigned char i = 0; i < SENT_DATA; i++)
 	{
 		usart1_sendbyte(packet_data[i]);
 	}
+	packet_data[SENT_DATA - 2] = 0;
 }
 
 /*
