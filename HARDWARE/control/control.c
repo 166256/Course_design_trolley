@@ -8,7 +8,7 @@ extern volatile int16_t encoderNum_R,encoderNum_L;
 unsigned char status = 0;
 unsigned char first = 2,second = 2, third = 2;	// 初始状态都是中间
 unsigned char v_offset1 = 13,v_offset2 = 33,v_offset3 = 63;
-short v_basic = 400;
+short v_basic = 80;
 PID pid_L,pid_R;
 int num_L,num_M,num_R;
 

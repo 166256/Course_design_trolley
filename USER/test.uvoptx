@@ -158,7 +158,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>K,0x0A</ItemText>
+          <ItemText>K</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -223,7 +223,7 @@
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>offset</ItemText>
+          <ItemText>offset,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
@@ -244,6 +244,16 @@
           <count>17</count>
           <WinNumber>1</WinNumber>
           <ItemText>decode_data</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>rotateSpeed_L</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>rotateSpeed_R</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

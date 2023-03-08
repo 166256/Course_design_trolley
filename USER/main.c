@@ -79,11 +79,11 @@ int main (void)
 			{
 				offset_modify();
 			}
-			moter_control();		
+//			moter_control();		
 			pid_L.target_val = v_basic;
 			pid_R.target_val = v_basic;
 		}
-		if(tim1_num1 >= 10)
+		if(tim1_num1 >= 2)
 		{
 			calc_motor_Right_rotate_speed();
 			calc_motor_Left_rotate_speed();
