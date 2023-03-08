@@ -1,6 +1,6 @@
 %% 连接与配置
 delete(instrfindall); %删除串口所有信息，方便下次使用  
-s=serial('com10'); %选择串口号  
+s=serial('com16'); %选择串口号  
 set(s,'BaudRate',115200,'StopBits',1,'Parity','none');%设置波特率  停止位  校验位  
 fopen(s);%打开串口
 %  fwrite(s,100,'uint8');%向单片机发送握手信号 

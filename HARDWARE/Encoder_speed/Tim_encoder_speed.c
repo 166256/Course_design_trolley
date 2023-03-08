@@ -27,18 +27,12 @@ void Tim_EncoderL_Init(void)
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
 	
 	GPIO_StructInit(&GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;  
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
 	GPIO_Init(GPIOA,&GPIO_InitStructure); 
 
-//	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);	
-//	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2,ENABLE);
-	
-//	TIM_DeInit(TIM2);
-	
 	TIM_TimeBaseStructInit(&TIM_TimeBaseInitStructure);		
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
 	TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;    // 向上计数

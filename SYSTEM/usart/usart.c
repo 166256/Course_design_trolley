@@ -1,7 +1,6 @@
 #include "sys.h"
 #include "usart.h"	
 
-extern unsigned int K;
 unsigned int offset1,offset2,offset3,Speed;
 unsigned char checksum = 0;
 unsigned char usart1_status = 0;
@@ -142,4 +141,3 @@ void USART1_IRQHandler(void)
 		USART_ReceiveData(USART1);	//查阅参考手册 软件序列清除标志位流程
 	}
 } 
-

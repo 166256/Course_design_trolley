@@ -610,6 +610,11 @@
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
             </File>
+            <File>
+              <FileName>protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\protocol\protocol.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

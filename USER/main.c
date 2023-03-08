@@ -14,6 +14,7 @@
 
 //#include "adc.h"
 
+extern volatile int16_t encoderNum_R,encoderNum_L;
 
 char L2=1,L1=1,M0=1,R1=1,R2=1;
 
@@ -74,11 +75,13 @@ int main (void)
 			R1 = TCRT_R1;
 			R2 = TCRT_R2;
 
-			if(offset1 != 0 || offset2 != 0)
+			if(offset1 != 0 || offset2 != 0 || offset3 != 0)
 			{
 				offset_modify();
 			}
-			moter_control();			
+			moter_control();		
+			pid_L.target_val = v_basic;
+			pid_R.target_val = v_basic;
 		}
 		if(tim1_num1 >= 10)
 		{
@@ -87,8 +90,14 @@ int main (void)
 			AutoReloadCallbackR();
 			AutoReloadCallbackL();
 			tim1_num1 = 0;
+			
+			// 调试电机用
+//			motor_buffer[6] = (encoderNum_L & 0x00FF);
+//			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
+//			motor_buffer[8] = (encoderNum_R & 0x00FF);
+//			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
+//			packet_bluedata(motor_buffer);
 		}
-		
 	}	
 }	
 

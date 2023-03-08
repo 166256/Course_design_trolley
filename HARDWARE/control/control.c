@@ -12,11 +12,11 @@ short v_basic = 400;
 PID pid_L,pid_R;
 int num_L,num_M,num_R;
 
-unsigned char motor_buffer[5];
+unsigned char motor_buffer[10];
 
 void moter_control()
 {
-	if(M0 == 1 && (L1 || L2 || R1 || R2) == 0)
+	if(M0 == 1 && (L2 || R2) == 0)
 	{
 		status = 2;
 		// 恢复
@@ -66,6 +66,7 @@ void moter_control()
 		}
 	}
 	
+	// 发送状态到上位机
 	motor_buffer[0] = L2;
 	motor_buffer[1] = L1;
 	motor_buffer[2] = M0;
@@ -77,19 +78,34 @@ void moter_control()
 
 void PID_Init()
 {	
-	pid_R.Kp = 3;
-//	pid_R.Ki = 0.1;
-	pid_L.Kp = 3;
-	pid_L.target_val = v_basic;
+	pid_R.Kp = 1.6;
+	pid_R.Ki = 0.14;
+	pid_R.Kd = 0.05;
+	pid_L.Kp = 1.6;
+	pid_L.Ki = 0.14;
+	pid_L.Kd = 0.05;
+	
 	pid_R.target_val = v_basic;
+	pid_L.target_val = v_basic;
 }
 
 void offset_modify()
 {
+	v_basic = Speed;
 	v_offset1 = offset1;
 	v_offset2 = offset2;
 	v_offset3 = offset3;
-	v_basic = Speed;
+	
+	// 调试电机用
+//	pid_L.Kp = (float)offset1 / 10;
+//	pid_L.Ki = (float)offset2 / 100;
+//	pid_L.Kd = (float)offset3 / 100;
+	
+//	pid_R.Kp = (float)offset1 / 10;
+//	pid_R.Ki = (float)offset2 / 100;
+//	pid_R.Kd = (float)offset3 / 100;
+	
+
 }
 
 int PID_realize(int actual_val,PID pid)
