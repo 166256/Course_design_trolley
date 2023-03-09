@@ -3,7 +3,7 @@
 #include "sys.h" 
 
 #define RECEIVE_NUM	9
-#define SENT_DATA	15
+#define SENT_DATA	19
 
 extern unsigned int offset1,offset2,offset3,start_flag,Speed;
 

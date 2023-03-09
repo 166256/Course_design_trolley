@@ -72,6 +72,7 @@ int main (void)
 				offset_modify();
 			}
 //			moter_control();		
+			read_status();
 			pid_L.target_val = v_basic;
 			pid_R.target_val = v_basic;
 		}
@@ -84,12 +85,17 @@ int main (void)
 			tim1_num1 = 0;
 			
 			// 调试电机用
+
 			motor_buffer[6] = (encoderNum_L & 0x00FF);
 			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
 			motor_buffer[8] = (encoderNum_R & 0x00FF);
 			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
 			motor_buffer[10] = (v_basic & 0x00FF);
 			motor_buffer[11] = (v_basic & 0xFF00) >> 8;
+			motor_buffer[12] = (res_pwm_L & 0x00FF);
+			motor_buffer[13] = (res_pwm_L & 0xFF00) >> 8;
+			motor_buffer[14] = (res_pwm_R & 0x00FF);
+			motor_buffer[15] = (res_pwm_R & 0xFF00) >> 8;
 			packet_bluedata(motor_buffer);
 		}
 		else if(start_flag == 0)

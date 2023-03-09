@@ -39,12 +39,12 @@ void tim4_gpio_config(void)
 */
 void PWM_Start(TIM_TypeDef* timer,uint8_t tim_channel,uint8_t freq,uint8_t duty)
 {
-	uint16_t arr = 36000/freq-1; // 设置自动重装载寄存器的值，用于设置PWM周期
+	uint16_t arr = 72000/freq-1; // 设置自动重装载寄存器的值，用于设置PWM周期
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 
-	TIM_TimeBaseStructure.TIM_Prescaler = 1; 					// 设置分频因子，2分频
+	TIM_TimeBaseStructure.TIM_Prescaler = 0; 					// 设置分频因子，2分频
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // 向上计数
 	TIM_TimeBaseStructure.TIM_Period = arr; 					// 自动重装载寄存器的值，即是PWM方波的周期
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;

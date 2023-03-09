@@ -16,6 +16,7 @@ typedef struct
 extern short v_basic;
 extern PID pid_L,pid_R;
 extern unsigned char motor_buffer[SENT_DATA - 3];
+extern volatile short res_pwm_R,res_pwm_L;
 
 void moter_control(void);
 void PID_Init(void);
@@ -24,5 +25,6 @@ void AutoReloadCallbackR(void);
 void AutoReloadCallbackL(void);
 void motor_init(void);
 void motor_stop(void);
+void read_status(void);
 
 #endif

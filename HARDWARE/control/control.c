@@ -12,6 +12,8 @@ unsigned char v_offset1 = 3,v_offset2 = 7,v_offset3 = 13;
 short v_basic = 80;
 PID pid_L,pid_R;
 
+int error = 0;
+
 unsigned char motor_buffer[SENT_DATA - 3];
 
 void moter_control()
@@ -76,55 +78,55 @@ void moter_control()
 	packet_bluedata(motor_buffer);
 }
 
-//void read_status()
-//{
-//	if(M0 == 1 && (L2 || R2) == 0)
-//	{	
-//		status = 2;
-//		error = 0;
-//	}
-//	else if(L1 == 1 && (M0 || L2 || R1 || R2) == 0)
-//	{
-//		status = 1;
-//		error = -1;
-//	}
-//	else if(L2 == 1 && (L1 || M0 || R1 || R2) == 0)
-//	{
-//		status = 0;
-//		error = -2
-//	}
-//	else if(R1 == 1 && (L1 || L2 || M0 || R2) == 0)
-//	{
-//		status = 3;
-//		error = 1;
-//	}
-//	else if(R2 == 1 && (L1 || L2 || R1 || M0) == 0)
-//	{
-//		status = 4;
-//		error = 2;
-//	}
-//	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
-//	{
-//		if(status == 4) // 右
-//			error = 3;
-//		else if(status == 0) // 左
-//			error = -3;
-//	}
-//}
+void read_status()
+{
+	if(M0 == 1 && (L2 || R2) == 0)
+	{	
+		status = 2;
+		error = 0;
+	}
+	else if(L1 == 1 && (M0 || L2 || R1 || R2) == 0)
+	{
+		status = 1;
+		error = -1;
+	}
+	else if(L2 == 1 && (L1 || M0 || R1 || R2) == 0)
+	{
+		status = 0;
+		error = -2;
+	}
+	else if(R1 == 1 && (L1 || L2 || M0 || R2) == 0)
+	{
+		status = 3;
+		error = 1;
+	}
+	else if(R2 == 1 && (L1 || L2 || R1 || M0) == 0)
+	{
+		status = 4;
+		error = 2;
+	}
+	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
+	{
+		if(status == 4) // 右
+			error = 4;
+		else if(status == 0) // 左
+			error = -4;
+	}
+}
 
-//int PID_dir(int error,int Target)   //方向PID(位置式)//Target=0;
-//{  
-//	int Output = 0;
-//	float Position_KP = 0,Position_KI = 0,Position_KD = 0;
-//	static float Bias,Integral_bias,Last_Bias;
-//	Bias = error - Target;                                  //计算偏差
-//	Integral_bias += Bias;                                  //求出偏差的积分
-//	Output = Position_KP * Bias + 
-//		     Position_KI * Integral_bias + 
-//		     Position_KD * (Bias - Last_Bias);       //位置式PID控制器
-//	Last_Bias = Bias;                                       //保存上一次偏差 
-//	return Output;                                           //返回输出值
-//}
+int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;
+{  
+	int Output = 0;
+	float Position_KP = 4,Position_KI = 0,Position_KD = 0;
+	static float Bias,Integral_bias,Last_Bias;
+	Bias = Error - Target;                                  //计算偏差
+	Integral_bias += Bias;                                  //求出偏差的积分
+	Output = Position_KP * Bias + 
+		     Position_KI * Integral_bias + 
+		     Position_KD * (Bias - Last_Bias);       //位置式PID控制器
+	Last_Bias = Bias;                                       //保存上一次偏差 
+	return Output;                                           //返回输出值
+}
 
 void PID_Init()
 {	
@@ -176,11 +178,15 @@ int PID_speed(int actual_val,PID pid)
 	return pid.output_val;
 }
 
-int res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
-int old_pwm_R = 0,old_pwm_L = 0;
+volatile short res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
+volatile short old_pwm_R = 0,old_pwm_L = 0;
 //周期定时器的回调函数
 void AutoReloadCallbackR()
 {
+	int offset = 0;
+	offset = PID_dir(error,0);
+	pid_R.target_val = v_basic - offset;
+	
 	int sum = 0;/*编码器值（PID输入）*/
 	
     /* 读取编码器测量的速度值 */
@@ -190,8 +196,8 @@ void AutoReloadCallbackR()
 	res_pwm_R += old_pwm_R;
 	old_pwm_R = res_pwm_R;
 	
-	if(res_pwm_R > 3500)
-		res_pwm_R = 3500;
+	if(res_pwm_R > 7100)
+		res_pwm_R = 7100;
 	else if(res_pwm_R < 1500)
 		res_pwm_R = 1500;
 	/*根据PWM值控制电机转动*/
@@ -204,6 +210,10 @@ void AutoReloadCallbackR()
 //周期定时器的回调函数
 void AutoReloadCallbackL()
 {
+	int offset  = 0;
+	offset = PID_dir(error,0);
+	pid_L.target_val = v_basic + offset; // 
+	
 	float sum = 0;/*编码器值（PID输入）*/
 	
     /* 读取编码器测量的速度值 */
@@ -213,8 +223,8 @@ void AutoReloadCallbackL()
 	res_pwm_L += old_pwm_L;
 	old_pwm_L = res_pwm_L;
 	
-	if(res_pwm_L > 3500)
-		res_pwm_L = 3500;
+	if(res_pwm_L > 7100)
+		res_pwm_L = 7100;
 	else if(res_pwm_L < 1000)
 		res_pwm_L = 1000;
 	/*根据PWM值控制电机转动*/
@@ -226,10 +236,10 @@ void AutoReloadCallbackL()
 
 void motor_init()
 {
-	PWM_Start(TIM4,1,11,0);		//左轮
-	PWM_Start(TIM4,2,11,30);	//左轮
-	PWM_Start(TIM4,3,11,0);		//右轮
-	PWM_Start(TIM4,4,11,30);	//右轮
+	PWM_Start(TIM4,1,15,0);		//左轮
+	PWM_Start(TIM4,2,15,30);	//左轮
+	PWM_Start(TIM4,3,15,0);		//右轮
+	PWM_Start(TIM4,4,15,30);	//右轮
 	
 	TIM_SetCompare1(TIM4,0);
 	TIM_SetCompare2(TIM4,0);
