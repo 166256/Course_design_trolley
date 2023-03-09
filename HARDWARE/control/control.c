@@ -7,76 +7,15 @@
 extern char L2,L1,M0,R1,R2;
 extern volatile int16_t encoderNum_R,encoderNum_L;
 
-unsigned char status = 0;
+unsigned char status = 2;
 unsigned char v_offset1 = 3,v_offset2 = 7,v_offset3 = 13;
 short v_basic = 80;
 PID pid_L,pid_R;
 
 int error = 0;
+float Position_KP = 4.5,Position_KI = 0,Position_KD = 15;
 
 unsigned char motor_buffer[SENT_DATA - 3];
-
-void moter_control()
-{
-	if(M0 == 1 && (L2 || R2) == 0)
-	{	
-		status = 2;
-		// 恢复
-		pid_L.target_val = v_basic;
-		pid_R.target_val = v_basic;
-	}
-	else if(L1 == 1 && (M0 || L2 || R1 || R2) == 0)
-	{
-		status = 1;
-		// 左慢右快
-		pid_L.target_val = v_basic - v_offset1;
-		pid_R.target_val = v_basic + v_offset1;
-	}
-	else if(L2 == 1 && (L1 || M0 || R1 || R2) == 0)
-	{
-		status = 0;
-		// 左慢右快
-		pid_L.target_val = v_basic - v_offset2;
-		pid_R.target_val = v_basic + v_offset2;
-	}
-	else if(R1 == 1 && (L1 || L2 || M0 || R2) == 0)
-	{
-		status = 3;
-		// 右慢左快
-		pid_L.target_val = v_basic + v_offset1;
-		pid_R.target_val = v_basic - v_offset1;
-	}
-	else if(R2 == 1 && (L1 || L2 || R1 || M0) == 0)
-	{
-		status = 4;
-		// 右慢左快
-		pid_L.target_val = v_basic + v_offset2;
-		pid_R.target_val = v_basic - v_offset2;
-	}
-	
-	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
-	{
-		if(status == 4) // 右
-		{
-			pid_L.target_val = v_basic + 1.2 * v_offset3;
-			pid_R.target_val = v_basic - 1.2 * v_offset3;
-		}
-		else if(status == 0) // 左
-		{
-			pid_L.target_val = v_basic - 1.2 * v_offset3;
-			pid_R.target_val = v_basic + 1.2 * v_offset3;		
-		}
-	}
-	
-	// 发送状态到上位机
-	motor_buffer[0] = L2;
-	motor_buffer[1] = L1;
-	motor_buffer[2] = M0;
-	motor_buffer[3] = R1;
-	motor_buffer[4] = R2;
-	motor_buffer[5] = status;
-	packet_bluedata(motor_buffer);
-}
 
 void read_status()
 {
@@ -114,27 +53,13 @@ void read_status()
 	}
 }
 
-int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;
-{  
-	int Output = 0;
-	float Position_KP = 4,Position_KI = 0,Position_KD = 0;
-	static float Bias,Integral_bias,Last_Bias;
-	Bias = Error - Target;                                  //计算偏差
-	Integral_bias += Bias;                                  //求出偏差的积分
-	Output = Position_KP * Bias + 
-		     Position_KI * Integral_bias + 
-		     Position_KD * (Bias - Last_Bias);       //位置式PID控制器
-	Last_Bias = Bias;                                       //保存上一次偏差 
-	return Output;                                           //返回输出值
-}
-
 void PID_Init()
 {	
-	pid_R.Kp = 1.6;
-	pid_R.Ki = 0.14;
+	pid_R.Kp = 5;
+	pid_R.Ki = 0.35;
 	pid_R.Kd = 0.05;
-	pid_L.Kp = 1.6;
-	pid_L.Ki = 0.14;
+	pid_L.Kp = 5;
+	pid_L.Ki = 0.35;
 	pid_L.Kd = 0.05;
 	
 	pid_R.target_val = v_basic;
@@ -144,18 +69,34 @@ void PID_Init()
 void offset_modify()
 {
 	v_basic = Speed;
+//	Position_KP = (float)offset1 / 10;
+//	Position_KD = (float)offset3 / 100;
 //	v_offset1 = offset1;
 //	v_offset2 = offset2;
 //	v_offset3 = offset3;
 	
 	// 调试电机用
-	pid_L.Kp = (float)offset1 / 10;
-	pid_L.Ki = (float)offset2 / 100;
-	pid_L.Kd = (float)offset3 / 100;
+//	pid_L.Kp = (float)offset1 / 10;
+//	pid_L.Ki = (float)offset2 / 100;
+//	pid_L.Kd = (float)offset3 / 100;
+//	
+//	pid_R.Kp = (float)offset1 / 10;
+//	pid_R.Ki = (float)offset2 / 100;
+//	pid_R.Kd = (float)offset3 / 100;
+}
+
+int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;
+{  
+	int Output = 0;
 	
-	pid_R.Kp = (float)offset1 / 10;
-	pid_R.Ki = (float)offset2 / 100;
-	pid_R.Kd = (float)offset3 / 100;
+	static float Bias,Integral_bias,Last_Bias;
+	Bias = Error - Target;                                  //计算偏差
+	Integral_bias += Bias;                                  //求出偏差的积分
+	Output = Position_KP * Bias + 
+		     Position_KI * Integral_bias + 
+		     Position_KD * (Bias - Last_Bias);       //位置式PID控制器
+	Last_Bias = Bias;                                       //保存上一次偏差 
+	return Output;                                           //返回输出值
 }
 
 int PID_speed(int actual_val,PID pid)
@@ -180,31 +121,34 @@ int PID_speed(int actual_val,PID pid)
 
 volatile short res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
 volatile short old_pwm_R = 0,old_pwm_L = 0;
-//周期定时器的回调函数
+
+// 周期定时器的回调函数
 void AutoReloadCallbackR()
 {
-	int offset = 0;
-	offset = PID_dir(error,0);
-	pid_R.target_val = v_basic - offset;
+	int offset = 0,sum = 0;;
 	
-	int sum = 0;/*编码器值（PID输入）*/
+	/* 方向环，得到后轮差速 */
+	offset = PID_dir(error,0);
+	
+	/* 计算右轮电机的目标速度 */
+	pid_R.target_val = v_basic - offset;
 	
     /* 读取编码器测量的速度值 */
 	sum = encoderNum_R;
-    /*进行PID运算，得到PWM输出值*/
+	
+    /* 速度环，得到PWM输出值 */
     res_pwm_R = PID_speed(sum, pid_R);
 	res_pwm_R += old_pwm_R;
 	old_pwm_R = res_pwm_R;
 	
+	/* 限制PWM值在合理范围 */
 	if(res_pwm_R > 7100)
 		res_pwm_R = 7100;
 	else if(res_pwm_R < 1500)
 		res_pwm_R = 1500;
+	
 	/*根据PWM值控制电机转动*/
 	TIM_SetCompare4(TIM4,res_pwm_R);
-	
-    /*给上位机通道1发送实际值*/
-//	packet_bluedata(sum);
 }
 
 //周期定时器的回调函数

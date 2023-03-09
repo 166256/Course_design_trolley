@@ -32,9 +32,8 @@ void packet_bluedata(unsigned char buffer[SENT_DATA - 3])
 	
 	// 发送
 	for(unsigned char i = 0; i < SENT_DATA; i++)
-	{
 		usart1_sendbyte(packet_data[i]);
-	}
+
 	packet_data[SENT_DATA - 2] = 0;
 }
 
@@ -65,7 +64,7 @@ void decode_bluedata(unsigned char data)
 				{
 					for(unsigned char i = 1;i < RECEIVE_NUM - 2;i++) // 计算校验和
 						checksum += decode_data[i];
-					if(checksum == decode_data[RECEIVE_NUM -2]) // 校验正确
+					if(checksum == decode_data[RECEIVE_NUM -2]) // 校验正确则开始解包
 					{
 						offset1 = decode_data[1];
 						offset2 = decode_data[2];

@@ -73,8 +73,8 @@ int main (void)
 			}
 //			moter_control();		
 			read_status();
-			pid_L.target_val = v_basic;
-			pid_R.target_val = v_basic;
+//			pid_L.target_val = v_basic;
+//			pid_R.target_val = v_basic;
 		}
 		if(start_flag && tim1_num1 >= 2)
 		{
@@ -85,7 +85,7 @@ int main (void)
 			tim1_num1 = 0;
 			
 			// 调试电机用
-
+			motor_buffer[5] = (unsigned char)(error + 3);
 			motor_buffer[6] = (encoderNum_L & 0x00FF);
 			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
 			motor_buffer[8] = (encoderNum_R & 0x00FF);
