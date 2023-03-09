@@ -1,9 +1,7 @@
 #ifndef __CONTROL_H__
 #define __CONTROL_H__	 
 #include "sys.h"
-
-#define INITIAL_SPEED	2000
-#define OFFSET			50
+#include "protocol.h"
 
 typedef struct
 {
@@ -17,12 +15,14 @@ typedef struct
 
 extern short v_basic;
 extern PID pid_L,pid_R;
-extern unsigned char motor_buffer[10];
+extern unsigned char motor_buffer[SENT_DATA - 3];
 
 void moter_control(void);
 void PID_Init(void);
 void offset_modify(void);
 void AutoReloadCallbackR(void);
 void AutoReloadCallbackL(void);
+void motor_init(void);
+void motor_stop(void);
 
 #endif

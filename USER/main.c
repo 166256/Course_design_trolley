@@ -8,6 +8,7 @@
 #include "Tim_encoder_speed.h"
 #include "Tim_pwm.h"
 
+#include "protocol.h"
 #include "gpio.h"
 #include "control.h"
 #include "mpu9250.h"
@@ -24,29 +25,20 @@ int main (void)
 	RCC_Configuration();		// 系统时钟初始化
 	LED_Init();					// LED初始化
 	OLED_Init();				// OLED初始化
-	delay_ms(1000);				// 等待其他设备初始化就绪
 	tcrt500l_init();
 	uart1_init(9600);
 	
-	key_gpio_config();
-	while(KEY_SCAN() == 1)
-		delay_ms(20);
+//	key_gpio_config();
+//	while(KEY_SCAN() == 1)
+//		delay_ms(20);
+	
+	delay_ms(1000);				// 等待其他设备初始化就绪
 	
 	tim1_init(99,7199);			// 10ms中断一次
 	tim4_gpio_config();
 	
-	PWM_Start(TIM4,1,11,0);		//左轮
-	PWM_Start(TIM4,2,11,30);	//左轮
-	PWM_Start(TIM4,3,11,0);		//右轮
-	PWM_Start(TIM4,4,11,30);	//右轮
-	
-	TIM_SetCompare1(TIM4,0);
-	TIM_SetCompare2(TIM4,2000);
-	TIM_SetCompare3(TIM4,0);
-	TIM_SetCompare4(TIM4,2000);
-	
+	motor_init();
 	PID_Init();
-
 	Tim_EncoderR_Init();		//右轮编码器
 	Tim_EncoderL_Init();
 //	ADC_Configuration();
@@ -83,7 +75,7 @@ int main (void)
 			pid_L.target_val = v_basic;
 			pid_R.target_val = v_basic;
 		}
-		if(tim1_num1 >= 2)
+		if(start_flag && tim1_num1 >= 2)
 		{
 			calc_motor_Right_rotate_speed();
 			calc_motor_Left_rotate_speed();
@@ -92,11 +84,17 @@ int main (void)
 			tim1_num1 = 0;
 			
 			// 调试电机用
-//			motor_buffer[6] = (encoderNum_L & 0x00FF);
-//			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
-//			motor_buffer[8] = (encoderNum_R & 0x00FF);
-//			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
-//			packet_bluedata(motor_buffer);
+			motor_buffer[6] = (encoderNum_L & 0x00FF);
+			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
+			motor_buffer[8] = (encoderNum_R & 0x00FF);
+			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
+			motor_buffer[10] = (v_basic & 0x00FF);
+			motor_buffer[11] = (v_basic & 0xFF00) >> 8;
+			packet_bluedata(motor_buffer);
+		}
+		else if(start_flag == 0)
+		{
+			motor_stop();
 		}
 	}	
 }	

@@ -39,3 +39,4 @@
 .\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\tim_pwm.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\tim_pwm.o: ..\SYSTEM\protocol\protocol.h

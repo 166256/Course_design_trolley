@@ -2,9 +2,12 @@
 #define __PROTOCOL_H__
 #include "sys.h" 
 
-#define DECODE_TO_INT(x, y)     (x) = (int) (((int) decode_data[y] <<24) | \
-                                ((int)decode_data[y+1] <<16) |\
-                                ((int)decode_data[y+2])<<8 |\
-                                ((int)decode_data[y+3]));
+#define RECEIVE_NUM	9
+#define SENT_DATA	15
+
+extern unsigned int offset1,offset2,offset3,start_flag,Speed;
+
+void packet_bluedata(unsigned char buffer[SENT_DATA - 3]);
+void decode_bluedata(unsigned char data);
 
 #endif

@@ -37,4 +37,6 @@
 .\objects\control.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\control.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\control.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\control.o: ..\SYSTEM\protocol\protocol.h
 .\objects\control.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
+.\objects\control.o: ..\HARDWARE\Tim_pwm\Tim_pwm.h
