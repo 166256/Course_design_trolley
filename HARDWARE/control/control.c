@@ -9,11 +9,11 @@ extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 2;
 unsigned char v_offset1 = 3,v_offset2 = 7,v_offset3 = 13;
-short v_basic = 80;
+short v_basic = 120;
 PID pid_L,pid_R;
 
 int error = 0;
-float Position_KP = 4.5,Position_KI = 0,Position_KD = 15;
+float Position_KP = 6.9,Position_KI = 0,Position_KD = 0;
 
 unsigned char motor_buffer[SENT_DATA - 3];
 
@@ -55,10 +55,10 @@ void read_status()
 
 void PID_Init()
 {	
-	pid_R.Kp = 5;
+	pid_R.Kp = 7.5;
 	pid_R.Ki = 0.35;
-	pid_R.Kd = 0.05;
-	pid_L.Kp = 5;
+	pid_R.Kd = 0;
+	pid_L.Kp = 7.5;
 	pid_L.Ki = 0.35;
 	pid_L.Kd = 0.05;
 	
@@ -76,13 +76,13 @@ void offset_modify()
 //	v_offset3 = offset3;
 	
 	// 调试电机用
-//	pid_L.Kp = (float)offset1 / 10;
-//	pid_L.Ki = (float)offset2 / 100;
-//	pid_L.Kd = (float)offset3 / 100;
-//	
-//	pid_R.Kp = (float)offset1 / 10;
-//	pid_R.Ki = (float)offset2 / 100;
-//	pid_R.Kd = (float)offset3 / 100;
+	pid_L.Kp = (float)offset1 / 10;
+	pid_L.Ki = (float)offset2 / 100;
+	pid_L.Kd = (float)offset3 / 100;
+	
+	pid_R.Kp = (float)offset1 / 10;
+	pid_R.Ki = (float)offset2 / 100;
+	pid_R.Kd = (float)offset3 / 100;
 }
 
 int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;
