@@ -8,7 +8,6 @@ extern char L2,L1,M0,R1,R2;
 extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 2;
-unsigned char v_offset1 = 3,v_offset2 = 7,v_offset3 = 13;
 short v_basic = 120;
 PID pid_L,pid_R;
 

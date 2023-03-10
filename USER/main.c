@@ -68,10 +68,8 @@ int main (void)
 			R2 = TCRT_R2;
 
 			if(offset1 != 0 || offset2 != 0 || offset3 != 0)
-			{
 				offset_modify();
-			}
-//			moter_control();		
+			
 			read_status();
 //			pid_L.target_val = v_basic;
 //			pid_R.target_val = v_basic;
