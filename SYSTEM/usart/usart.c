@@ -1,7 +1,6 @@
 #include "sys.h"
 #include "usart.h"	
-
-
+#include "protocol.h"
 
 void uart1_init(u32 bound){
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -44,7 +43,6 @@ void usart1_sendbyte(uint8_t data)
 	USART1->DR = data;
 	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
 }
-
 
 /*
 *********************************************************************************************************

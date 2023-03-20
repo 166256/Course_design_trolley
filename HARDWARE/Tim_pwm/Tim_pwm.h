@@ -6,6 +6,7 @@
 #include "stm32f10x.h"
 
 extern unsigned char tim1_num1;
+extern unsigned char tim1_num2;
 extern unsigned char tim1_flag;
 
 //º¯ÊıÉùÃ÷

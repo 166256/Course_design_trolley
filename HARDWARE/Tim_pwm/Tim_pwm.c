@@ -118,16 +118,16 @@ void tim1_init(u16 psc,u16 arr)
 *********************************************************************************************************
 */
 // 记录定时器1中断次数
-unsigned char tim1_num = 0; 	// 用在控制算法中
-unsigned char tim1_num1 = 0;	// 用在主函数中
+unsigned char tim1_num1 = 0;	// 用在主函数中控制算法
+unsigned char tim1_num2 = 0;	// 用在主函数中发送数据
 unsigned char tim1_flag = 0;	// 用在主函数中
 void TIM1_UP_IRQHandler(void)	
 {
 	if(TIM_GetITStatus(TIM1,TIM_IT_Update)==SET)  // 中断标志位置1
 	{
 		tim1_flag = 1;
-		tim1_num++;
 		tim1_num1++;
+		tim1_num2++;
 	}
 	TIM_ClearITPendingBit(TIM1,TIM_IT_Update);		//清除中断标志位
 }

@@ -5,7 +5,6 @@
 #include "Tim_pwm.h"
 
 extern char L2,L1,M0,R1,R2;
-extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 2;
 short v_basic = 120;
@@ -69,19 +68,16 @@ void offset_modify()
 {
 	v_basic = Speed;
 //	Position_KP = (float)offset1 / 10;
-//	Position_KD = (float)offset3 / 100;
-//	v_offset1 = offset1;
-//	v_offset2 = offset2;
-//	v_offset3 = offset3;
+	Position_KP = (float)offset3 / 10;
 	
 	// 调试电机用
 	pid_L.Kp = (float)offset1 / 10;
 	pid_L.Ki = (float)offset2 / 100;
-	pid_L.Kd = (float)offset3 / 100;
+//	pid_L.Kd = (float)offset3 / 100;
 	
 	pid_R.Kp = (float)offset1 / 10;
 	pid_R.Ki = (float)offset2 / 100;
-	pid_R.Kd = (float)offset3 / 100;
+//	pid_R.Kd = (float)offset3 / 100;
 }
 
 int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;

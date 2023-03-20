@@ -97,8 +97,8 @@
 #define MPU_DEVICE_ID_REG		0X75	//器件ID寄存器
 
 extern short aacx,aacy,aacz;	        //加速度传感器原始数据
-extern short gyrox,gyroy,gyroz;      //陀螺仪原始数据 
-extern short mx,my,mz;             //磁力计原始数据
+extern short gyrox,gyroy,gyroz;      	//陀螺仪原始数据 
+extern short mx,my,mz;            	 	//磁力计原始数据
 
 void Read_DMP(void);
 u8 MPU9250_Init(void);

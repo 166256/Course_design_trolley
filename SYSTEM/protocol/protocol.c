@@ -8,6 +8,23 @@ unsigned char decode_data[RECEIVE_NUM] = {0};
 unsigned char num = 0;
 unsigned char packet_data[SENT_DATA] = {0};
 
+void short2char(unsigned char b[2],int a,int c)
+{
+	for(int i=c;i<c+2;i++)
+		{
+			b[i]=(unsigned char)a;
+			a=a>>8;
+		}
+}
+void UART_Send_Message(u8 *Data,u8 lenth)
+{
+  while(lenth--)
+  {
+      USART_SendData(USART1, *Data);
+      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+      Data++;
+  }
+}
 /*
 *********************************************************************************************************
 *	函 数 名: decode_bluedata                    
@@ -66,11 +83,16 @@ void decode_bluedata(unsigned char data)
 						checksum += decode_data[i];
 					if(checksum == decode_data[RECEIVE_NUM -2]) // 校验正确则开始解包
 					{
-						offset1 = decode_data[1];
-						offset2 = decode_data[2];
-						offset3 = decode_data[3];
-						start_flag = decode_data[4];
-						Speed = decode_data[5] | decode_data[6] << 8 ;
+//						offset1 = decode_data[1];
+//						offset2 = decode_data[2];
+//						offset3 = decode_data[3];
+//						start_flag = decode_data[4];
+//						Speed = decode_data[5] | decode_data[6] << 8 ;
+						Speed = decode_data[1] | decode_data[2] << 8 ;
+						offset1 = decode_data[5];
+						offset2 = decode_data[6];
+						offset3 = decode_data[7];
+						start_flag = decode_data[8];
 					}
 					checksum = 0;
 				}

@@ -411,11 +411,6 @@
               <FilePath>..\HARDWARE\TCRT500L\tcrt500l.c</FilePath>
             </File>
             <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\adc\adc.c</FilePath>
-            </File>
-            <File>
               <FileName>mpu9250.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\MPU9250\mpu9250.c</FilePath>
@@ -429,11 +424,6 @@
               <FileName>control.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\control\control.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\GPIO\gpio.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -7,17 +7,13 @@
 #include "tcrt500l.h"
 #include "Tim_encoder_speed.h"
 #include "Tim_pwm.h"
-
 #include "protocol.h"
-#include "gpio.h"
 #include "control.h"
+
 #include "mpu9250.h"
 
-//#include "adc.h"
-
-extern volatile int16_t encoderNum_R,encoderNum_L;
-
 char L2=1,L1=1,M0=1,R1=1,R2=1;
+unsigned char mychar[128];
 
 int main (void)
 {
@@ -28,20 +24,14 @@ int main (void)
 	tcrt500l_init();
 	uart1_init(9600);
 	
-//	key_gpio_config();
-//	while(KEY_SCAN() == 1)
-//		delay_ms(20);
-	
 	delay_ms(1000);				// 等待其他设备初始化就绪
 	
 	tim1_init(99,7199);			// 10ms中断一次
-	tim4_gpio_config();
-	
+	tim4_gpio_config();	
 	motor_init();
 	PID_Init();
 	Tim_EncoderR_Init();		//右轮编码器
 	Tim_EncoderL_Init();
-//	ADC_Configuration();
 
 	MPU9250_Init();
 	
@@ -71,9 +61,19 @@ int main (void)
 				offset_modify();
 			
 			read_status();
+			Read_DMP();
 //			pid_L.target_val = v_basic;
 //			pid_R.target_val = v_basic;
 		}
+		if(tim1_num2 >= 5)
+		{
+			mychar[0] = 0x31;
+			short2char(mychar,encoderNum_L,1);
+			short2char(mychar,v_basic,3);
+			UART_Send_Message(mychar,5);
+			tim1_num2 = 0;
+		}
+
 		if(start_flag && tim1_num1 >= 2)
 		{
 			calc_motor_Right_rotate_speed();
@@ -83,18 +83,18 @@ int main (void)
 			tim1_num1 = 0;
 			
 			// 调试电机用
-			motor_buffer[5] = (unsigned char)(error + 3);
-			motor_buffer[6] = (encoderNum_L & 0x00FF);
-			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
-			motor_buffer[8] = (encoderNum_R & 0x00FF);
-			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
-			motor_buffer[10] = (v_basic & 0x00FF);
-			motor_buffer[11] = (v_basic & 0xFF00) >> 8;
-			motor_buffer[12] = (res_pwm_L & 0x00FF);
-			motor_buffer[13] = (res_pwm_L & 0xFF00) >> 8;
-			motor_buffer[14] = (res_pwm_R & 0x00FF);
-			motor_buffer[15] = (res_pwm_R & 0xFF00) >> 8;
-			packet_bluedata(motor_buffer);
+//			motor_buffer[5] = (unsigned char)(error + 3);
+//			motor_buffer[6] = (encoderNum_L & 0x00FF);
+//			motor_buffer[7] = (encoderNum_L & 0xFF00) >> 8;
+//			motor_buffer[8] = (encoderNum_R & 0x00FF);
+//			motor_buffer[9] = (encoderNum_R & 0xFF00) >> 8;
+//			motor_buffer[10] = (v_basic & 0x00FF);
+//			motor_buffer[11] = (v_basic & 0xFF00) >> 8;
+//			motor_buffer[12] = (res_pwm_L & 0x00FF);
+//			motor_buffer[13] = (res_pwm_L & 0xFF00) >> 8;
+//			motor_buffer[14] = (res_pwm_R & 0x00FF);
+//			motor_buffer[15] = (res_pwm_R & 0xFF00) >> 8;
+//			packet_bluedata(motor_buffer);
 		}
 		else if(start_flag == 0)
 		{
