@@ -1,10 +1,9 @@
 #ifndef _MPU9250_H
 #define _MPU9250_H
 #include "sys.h"
- /**************************************************************************
-作者：平衡小车之家
-我的淘宝小店：http://shop114407458.taobao.com/
-**************************************************************************/						  
+#include "delay.h"
+
+
 ////////////////////////////////////////////////////////////////////////////////// 	
 //如果AD0脚(9脚)接地,IIC地址为0X68(不包含最低位).
 //如果接V3.3,则IIC地址为0X69(不包含最低位).
@@ -97,8 +96,34 @@
 #define MPU_DEVICE_ID_REG		0X75	//器件ID寄存器
 
 extern short aacx,aacy,aacz;	        //加速度传感器原始数据
-extern short gyrox,gyroy,gyroz;      	//陀螺仪原始数据 
-extern short mx,my,mz;            	 	//磁力计原始数据
+extern short gyrox,gyroy,gyroz;      //陀螺仪原始数据 
+extern short mx,my,mz;             //磁力计原始数据
+
+extern float mag_angle_dir;
+extern float mag_offset_angle;
+extern float gyro_angle_dir;
+extern float fuse_angle;
+
+struct imu_para
+{
+	float acc_x;
+	float acc_y;
+	float acc_z;
+	
+	float gyro_x;
+	float gyro_y;
+	float gyro_z; 
+	
+	float mag_x;
+	float mag_y;
+	float mag_z;
+};
+
+extern struct imu_para IMU_9250;
+extern struct imu_para Offset_9250;
+extern struct imu_para RC_9250;
+extern struct imu_para Mov_9250;
+extern struct imu_para Fuse_9250;
 
 void Read_DMP(void);
 u8 MPU9250_Init(void);
@@ -114,4 +139,11 @@ short MPU_Get_Temperature(void);      //读取温度
 u8 MPU_Get_Gyroscope(short *gx,short *gy,short *gz);  //读取陀螺仪
 u8 MPU_Get_Accelerometer(short *ax,short *ay,short *az); //读取加速度计
 u8 MPU_Get_Magnetometer(short *mx,short *my,short *mz);//读取磁力计
+
+
+void IMU_OffsetInit(void);
+void IMU_9250_GetValues(void);
+void get_angle_IMU(void);
+void Calibrated_Mag(void);
+
 #endif

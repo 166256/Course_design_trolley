@@ -5,5 +5,6 @@
 
 void uart1_init(u32 bound);
 void usart1_sendbyte(uint8_t data);
+void DEBUG_printf(char* fmt,...) ;
 
 #endif

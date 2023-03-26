@@ -187,7 +187,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_LD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\adc;..\HARDWARE\LED;..\HARDWARE\OLED;..\HARDWARE\PWM;..\USER;..\HARDWARE\EXTRA;..\HARDWARE\flash;..\HARDWARE\DataScope_DP;..\HARDWARE\exti;..\HARDWARE\TIMER;..\HARDWARE\ENCODER;..\HARDWARE\CONTROL;..\HARDWARE\spi;..\HARDWARE\BUZZER;..\HARDWARE\Tim_pwm;..\HARDWARE\Encoder_speed;..\HARDWARE\GPIO;..\HARDWARE\TCRT500L;..\HARDWARE\adc;..\HARDWARE\MPUIIC;..\HARDWARE\MPU9250;..\HARDWARE\control;..\SYSTEM\protocol</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\adc;..\HARDWARE\LED;..\HARDWARE\OLED;..\HARDWARE\PWM;..\USER;..\HARDWARE\EXTRA;..\HARDWARE\flash;..\HARDWARE\DataScope_DP;..\HARDWARE\exti;..\HARDWARE\TIMER;..\HARDWARE\ENCODER;..\HARDWARE\CONTROL;..\HARDWARE\spi;..\HARDWARE\BUZZER;..\HARDWARE\Tim_pwm;..\HARDWARE\Encoder_speed;..\HARDWARE\GPIO;..\HARDWARE\TCRT500L;..\HARDWARE\adc;..\HARDWARE\MPUIIC;..\HARDWARE\MPU9250;..\HARDWARE\control;..\SYSTEM\protocol;..\HARDWARE\filter;..\HARDWARE\track</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -411,6 +411,11 @@
               <FilePath>..\HARDWARE\TCRT500L\tcrt500l.c</FilePath>
             </File>
             <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\adc\adc.c</FilePath>
+            </File>
+            <File>
               <FileName>mpu9250.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\MPU9250\mpu9250.c</FilePath>
@@ -424,6 +429,21 @@
               <FileName>control.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\control\control.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\GPIO\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>Filter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\filter\Filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>track.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\track\track.c</FilePath>
             </File>
           </Files>
         </Group>

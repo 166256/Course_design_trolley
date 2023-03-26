@@ -176,6 +176,7 @@ int calc_motor_Left_rotate_speed(void)
 	encoderNum_L = Get_Encoder_Cnt(2)+(65535*Encoder_Timer_Overflow_L);
 	/* 转速(1秒钟转多少圈)=单位时间内(100ms)的计数值/总分辨率*时间系数,总分辨率即车轮转过一圈的脉冲数，时间系数是1000ms/定时时长 */
 	rotateSpeed_L = (float)encoderNum_L/Total_Resolution*(1000/Tim_time);
+	rotateSpeed_L = -rotateSpeed_L;
 	encoderNum_L = -encoderNum_L;
 	return encoderNum_L;
 }

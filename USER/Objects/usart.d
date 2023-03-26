@@ -37,3 +37,4 @@
 .\objects\usart.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\usart.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\usart.o: ..\SYSTEM\protocol\protocol.h
+.\objects\usart.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdarg.h

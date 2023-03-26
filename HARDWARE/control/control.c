@@ -5,9 +5,10 @@
 #include "Tim_pwm.h"
 
 extern char L2,L1,M0,R1,R2;
+extern volatile int16_t encoderNum_R,encoderNum_L;
 
 unsigned char status = 2;
-short v_basic = 120;
+short v_basic = 80;
 PID pid_L,pid_R;
 
 int error = 0;
@@ -58,7 +59,7 @@ void PID_Init()
 	pid_R.Kd = 0;
 	pid_L.Kp = 7.5;
 	pid_L.Ki = 0.35;
-	pid_L.Kd = 0.05;
+	pid_L.Kd = 0;
 	
 	pid_R.target_val = v_basic;
 	pid_L.target_val = v_basic;
@@ -68,7 +69,10 @@ void offset_modify()
 {
 	v_basic = Speed;
 //	Position_KP = (float)offset1 / 10;
-	Position_KP = (float)offset3 / 10;
+	Position_KP= (float)offset3 / 10;
+//	v_offset1 = offset1;
+//	v_offset2 = offset2;
+//	v_offset3 = offset3;
 	
 	// 调试电机用
 	pid_L.Kp = (float)offset1 / 10;
@@ -116,42 +120,39 @@ int PID_speed(int actual_val,PID pid)
 
 volatile short res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
 volatile short old_pwm_R = 0,old_pwm_L = 0;
-
-// 周期定时器的回调函数
+int offset_R = 0;
+//周期定时器的回调函数
 void AutoReloadCallbackR()
 {
-	int offset = 0,sum = 0;;
+	offset_R = PID_dir(error,0);
+	pid_R.target_val = v_basic - offset_R;
 	
-	/* 方向环，得到后轮差速 */
-	offset = PID_dir(error,0);
-	
-	/* 计算右轮电机的目标速度 */
-	pid_R.target_val = v_basic - offset;
+	int sum = 0;/*编码器值（PID输入）*/
 	
     /* 读取编码器测量的速度值 */
 	sum = encoderNum_R;
-	
-    /* 速度环，得到PWM输出值 */
+    /*进行PID运算，得到PWM输出值*/
     res_pwm_R = PID_speed(sum, pid_R);
 	res_pwm_R += old_pwm_R;
 	old_pwm_R = res_pwm_R;
 	
-	/* 限制PWM值在合理范围 */
 	if(res_pwm_R > 7100)
 		res_pwm_R = 7100;
 	else if(res_pwm_R < 1500)
 		res_pwm_R = 1500;
-	
 	/*根据PWM值控制电机转动*/
 	TIM_SetCompare4(TIM4,res_pwm_R);
+	
+    /*给上位机通道1发送实际值*/
+//	packet_bluedata(sum);
 }
 
+int offset_L  = 0;
 //周期定时器的回调函数
 void AutoReloadCallbackL()
 {
-	int offset  = 0;
-	offset = PID_dir(error,0);
-	pid_L.target_val = v_basic + offset; // 
+	offset_L = PID_dir(error,0);
+	pid_L.target_val = v_basic + offset_L; // 
 	
 	float sum = 0;/*编码器值（PID输入）*/
 	
@@ -175,6 +176,7 @@ void AutoReloadCallbackL()
 
 void motor_init()
 {
+	tim4_gpio_config();
 	PWM_Start(TIM4,1,15,0);		//左轮
 	PWM_Start(TIM4,2,15,30);	//左轮
 	PWM_Start(TIM4,3,15,0);		//右轮

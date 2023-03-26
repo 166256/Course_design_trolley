@@ -38,3 +38,4 @@
 .\objects\mpu9250.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\mpu9250.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\mpu9250.o: ..\HARDWARE\MPUIIC\mpuiic.h
+.\objects\mpu9250.o: ..\HARDWARE\filter\Filter.h

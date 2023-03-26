@@ -8,7 +8,10 @@
 #define	Total_Resolution	1040	// 1040为转轮转过一周输出的脉冲数（4倍频后）
 #define	Encoder_TIM_Period	0xffff	// 重装载值，不可大于65535 因为F103的定时器是16位的
 
-extern volatile int16_t encoderNum_R,encoderNum_L;
+extern volatile int16_t encoderNum_L;			
+extern volatile int16_t encoderNum_R;
+extern volatile float rotateSpeed_L;
+extern volatile float rotateSpeed_R;
 
 //函数声明
 void Tim_EncoderL_Init(void);

@@ -1,6 +1,8 @@
 #include "sys.h"
 #include "usart.h"	
 #include "protocol.h"
+#include "stdarg.h"
+
 
 void uart1_init(u32 bound){
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -44,6 +46,7 @@ void usart1_sendbyte(uint8_t data)
 	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
 }
 
+
 /*
 *********************************************************************************************************
 *	函 数 名: USART1_IRQHandler                    
@@ -66,3 +69,32 @@ void USART1_IRQHandler(void)
 		USART_ReceiveData(USART1);	//查阅参考手册 软件序列清除标志位流程
 	}
 } 
+
+
+#define USART1_TXBUFF_SIZE   256    //定义串口1 发送缓冲区大小 256字节
+__align(8) char USART1_TxBuff[USART1_TXBUFF_SIZE];
+
+void DEBUG_printf(char* fmt,...) 
+{  
+	unsigned int i,length;
+
+	va_list ap;
+	va_start(ap,fmt);
+	vsprintf(USART1_TxBuff,fmt,ap);
+	va_end(ap); 
+
+	length=strlen((const char*)USART1_TxBuff);  
+	while((USART1->SR&0X40)==0);
+	for(i = 0;i < length;i ++)
+	{   
+	USART1->DR = USART1_TxBuff[i];
+	while((USART1->SR&0X40)==0); 
+	} 
+//	while(USART_GetFlagStatus(USART1,USART_FLAG_TXE) == RESET); //等待发送寄存器为空才能发送下一个字符	
+//	for(i = 0;i < length;i ++)
+//	{
+//	USART1->DR = USART1_TxBuff[i];
+//	while(USART_GetFlagStatus(USART1,USART_FLAG_TC) != SET);		//等待发送完成
+//	}
+
+}
