@@ -1,7 +1,7 @@
 #include "protocol.h"
 #include "usart.h"
 
-unsigned int offset1,offset2,offset3,start_flag,Speed;
+char offset1,offset2,offset3,start_flag,Speed;
 unsigned char checksum = 0;
 unsigned char usart1_status = 0;
 unsigned char decode_data[RECEIVE_NUM] = {0};

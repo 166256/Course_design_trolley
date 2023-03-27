@@ -1,6 +1,7 @@
 #include "Tim_pwm.h"
 #include "Tim_encoder_speed.h"
 #include "control.h"
+#include "protocol.h"
 
 /*
 *********************************************************************************************************
@@ -120,7 +121,9 @@ void tim1_init(u16 psc,u16 arr)
 // 记录定时器1中断次数
 unsigned char tim1_num1 = 0;	// 用在主函数中控制算法
 unsigned char tim1_num2 = 0;	// 用在主函数中发送数据
+unsigned int tim1_num3 = 0;		// 用于判断S弯
 unsigned char tim1_flag = 0;	// 用在主函数中
+unsigned char judge_S = 1;
 void TIM1_UP_IRQHandler(void)	
 {
 	if(TIM_GetITStatus(TIM1,TIM_IT_Update)==SET)  // 中断标志位置1
@@ -128,6 +131,8 @@ void TIM1_UP_IRQHandler(void)
 		tim1_flag = 1;
 		tim1_num1++;
 		tim1_num2++;
+		if(start_flag && judge_S)
+			tim1_num3++;
 	}
 	TIM_ClearITPendingBit(TIM1,TIM_IT_Update);		//清除中断标志位
 }

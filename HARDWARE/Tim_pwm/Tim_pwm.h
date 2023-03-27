@@ -7,7 +7,9 @@
 
 extern unsigned char tim1_num1;
 extern unsigned char tim1_num2;
+extern unsigned int tim1_num3;		// 用于判断S弯
 extern unsigned char tim1_flag;
+extern unsigned char judge_S;
 
 //函数声明
 void tim4_gpio_config(void);

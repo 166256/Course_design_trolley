@@ -13,7 +13,7 @@
 #define RECEIVE_NUM	11
 #define SENT_DATA	18
 
-extern unsigned int offset1,offset2,offset3,start_flag,Speed;
+extern char offset1,offset2,offset3,start_flag,Speed;
 
 void packet_bluedata(unsigned char buffer[SENT_DATA - 3]);
 void decode_bluedata(unsigned char data);

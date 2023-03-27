@@ -435,7 +435,7 @@ void get_angle_IMU(void)
 	float angle_decimal;
 
 	//陀螺仪直接结算 已处理成0-360
-	gyro_angle_dir += Mov_9250.gyro_z * 0.01 * 57.2958f * 1.285; // 
+	gyro_angle_dir += Mov_9250.gyro_z * 0.01 * 57.2958f * 0.818; // * 1.285
 	if (gyro_angle_dir < 0) 
         gyro_angle_dir += 360;
 	else if (gyro_angle_dir >= 360) 

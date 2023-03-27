@@ -4,52 +4,74 @@
 #include "protocol.h"
 #include "Tim_pwm.h"
 
-extern char L2,L1,M0,R1,R2;
-extern volatile int16_t encoderNum_R,encoderNum_L;
+extern char L2,L1,M0,R1,R2;	// 传感器的状态
+extern volatile int16_t encoderNum_R,encoderNum_L; // 编码器读数
 
-unsigned char status = 2;
-short v_basic = 80;
-PID pid_L,pid_R;
+int Position_error = 0;	// 方向环PID的error，控制方法2
+char error_sensor[7] = {0};	// 记录在一个控制周期内，每个传感器各检测到几次，索引是从左往右数的第几个传感器（包括两个虚拟传感器）
+unsigned char status = 2;	// 记录现在是从左往右数的第几个传感器检测到黑线
+int error = 0;				// 方向环PID的error，控制方法1
+short v_basic = 95;			// 电机基础速度
+PID pid_L,pid_R;			// 速度环的PID结构体变量
 
-int error = 0;
-float Position_KP = 6.9,Position_KI = 0,Position_KD = 0;
-
-unsigned char motor_buffer[SENT_DATA - 3];
+float Position_KP = 0.60,Position_KI = 0,Position_KD = 0;	// 方向环PID参数
 
 void read_status()
 {
 	if(M0 == 1 && (L2 || R2) == 0)
 	{	
+		error_sensor[3]++;
 		status = 2;
 		error = 0;
 	}
 	else if(L1 == 1 && (M0 || L2 || R1 || R2) == 0)
 	{
+		error_sensor[2]++;
 		status = 1;
 		error = -1;
 	}
 	else if(L2 == 1 && (L1 || M0 || R1 || R2) == 0)
 	{
+		error_sensor[1]++;
 		status = 0;
 		error = -2;
 	}
 	else if(R1 == 1 && (L1 || L2 || M0 || R2) == 0)
 	{
+		error_sensor[4]++;
 		status = 3;
 		error = 1;
 	}
 	else if(R2 == 1 && (L1 || L2 || R1 || M0) == 0)
 	{
+		error_sensor[5]++;
 		status = 4;
 		error = 2;
 	}
 	if(M0 == 0 && L1 == 0 && L2 == 0 && R1 == 0 && R2 ==0)
 	{
 		if(status == 4) // 右
+		{
+			error_sensor[6]++;
 			error = 4;
+		}
 		else if(status == 0) // 左
+		{
+			error_sensor[0]++;
 			error = -4;
+		}
 	}
+}
+
+int get_error(unsigned char ms)
+{
+	int position_error = 0;
+	for(char i = 0; i<7; i++)
+	{
+		position_error += error_sensor[i] * (i - 3) * ms;
+		error_sensor[i] = 0;
+	}
+	return position_error;
 }
 
 void PID_Init()
@@ -68,19 +90,20 @@ void PID_Init()
 void offset_modify()
 {
 	v_basic = Speed;
+	pid_R.target_val = v_basic;
+	pid_L.target_val = v_basic;
 //	Position_KP = (float)offset1 / 10;
-	Position_KP= (float)offset3 / 10;
-//	v_offset1 = offset1;
-//	v_offset2 = offset2;
-//	v_offset3 = offset3;
+	Position_KP= (float)offset1 / 100;
+//	Position_KI= (float)offset2 / 100;
+	Position_KD= (float)offset3 / 10;
 	
 	// 调试电机用
-	pid_L.Kp = (float)offset1 / 10;
-	pid_L.Ki = (float)offset2 / 100;
+	pid_L.Kp = (float)offset2 / 10;
+//	pid_L.Ki = (float)offset2 / 100;
 //	pid_L.Kd = (float)offset3 / 100;
 	
-	pid_R.Kp = (float)offset1 / 10;
-	pid_R.Ki = (float)offset2 / 100;
+	pid_R.Kp = (float)offset2 / 10;
+//	pid_R.Ki = (float)offset2 / 100;
 //	pid_R.Kd = (float)offset3 / 100;
 }
 
@@ -122,10 +145,17 @@ volatile short res_pwm_R = 0,res_pwm_L = 0; /*PWM值（PID输出）*/
 volatile short old_pwm_R = 0,old_pwm_L = 0;
 int offset_R = 0;
 //周期定时器的回调函数
-void AutoReloadCallbackR()
+void AutoReloadCallbackR(int Error)
 {
-	offset_R = PID_dir(error,0);
+	offset_R = PID_dir(Error,0);
+	
+#ifdef PID_DIR_ADD
+	pid_R.target_val -= offset_R;
+#endif
+
+#ifdef PID_DIR
 	pid_R.target_val = v_basic - offset_R;
+#endif
 	
 	int sum = 0;/*编码器值（PID输入）*/
 	
@@ -149,11 +179,16 @@ void AutoReloadCallbackR()
 
 int offset_L  = 0;
 //周期定时器的回调函数
-void AutoReloadCallbackL()
+void AutoReloadCallbackL(int Error)
 {
-	offset_L = PID_dir(error,0);
-	pid_L.target_val = v_basic + offset_L; // 
-	
+	offset_L = PID_dir(Error,0);
+#ifdef PID_DIR_ADD
+	pid_L.target_val += offset_L;
+#endif
+
+#ifdef PID_DIR
+	pid_L.target_val = v_basic + offset_L;
+#endif
 	float sum = 0;/*编码器值（PID输入）*/
 	
     /* 读取编码器测量的速度值 */
