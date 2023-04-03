@@ -38,3 +38,5 @@
 .\objects\track.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\track.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\track.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
+.\objects\track.o: ..\HARDWARE\CONTROL\control.h
+.\objects\track.o: ..\SYSTEM\protocol\protocol.h

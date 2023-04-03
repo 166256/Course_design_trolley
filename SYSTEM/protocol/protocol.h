@@ -11,7 +11,7 @@
 								motor_buffer[(x)+3] = (y & 0xFF000000) >> 24;
 
 #define RECEIVE_NUM	11
-#define SENT_DATA	18
+#define SENT_DATA	20
 
 extern char offset1,offset2,offset3,start_flag,Speed;
 

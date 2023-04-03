@@ -1,6 +1,7 @@
 #include "track.h"
 #include "Tim_encoder_speed.h"
 #include "stdio.h"
+#include "control.h"
 
 #define GEO_ANGLE(x)    ((x) * 0.0174533f)  // PI / 180 = 0.0174533f
 
@@ -11,7 +12,7 @@ float north_v,east_v,v;
 void track_construction(float angle,float ms)
 {
 	angle = GEO_ANGLE(angle); // 将角度转换成弧度制
-	v = (rotateSpeed_R > rotateSpeed_L ? rotateSpeed_L : rotateSpeed_R);
+	v = v_basic;
 	north_v = v * cos(angle);
 	east_v = v * sin(angle);
 	float t = ms / 1000;

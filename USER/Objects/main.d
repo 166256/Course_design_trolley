@@ -46,3 +46,4 @@
 .\objects\main.o: ..\HARDWARE\CONTROL\control.h
 .\objects\main.o: ..\HARDWARE\MPU9250\mpu9250.h
 .\objects\main.o: ..\HARDWARE\track\track.h
+.\objects\main.o: ..\HARDWARE\kalman\kalman.h

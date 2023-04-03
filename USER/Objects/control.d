@@ -40,3 +40,4 @@
 .\objects\control.o: ..\SYSTEM\protocol\protocol.h
 .\objects\control.o: ..\HARDWARE\Encoder_speed\Tim_encoder_speed.h
 .\objects\control.o: ..\HARDWARE\Tim_pwm\Tim_pwm.h
+.\objects\control.o: ..\HARDWARE\MPU9250\mpu9250.h

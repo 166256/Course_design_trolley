@@ -1,5 +1,6 @@
 #include "protocol.h"
 #include "usart.h"
+#include "control.h"
 
 char offset1,offset2,offset3,start_flag,Speed;
 unsigned char checksum = 0;
@@ -93,6 +94,8 @@ void decode_bluedata(unsigned char data)
 						offset2 = decode_data[6];
 						offset3 = decode_data[7];
 						start_flag = decode_data[8];
+								
+						offset_modify(); // ÐÞ¸Ä²ÎÊý
 					}
 					checksum = 0;
 				}

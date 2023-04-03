@@ -21,8 +21,11 @@ extern int offset_R,offset_L;
 extern int Position_error;
 extern float Position_KP,Position_KI,Position_KD;	// 方向环PID参数
 
-//#define PID_DIR_ADD 0
-#define PID_DIR 	1
+#define PID_DIR_ADD 	0	// 方向环PID改成增量
+#define WEIGNT_LOWER	1	// 降低旁边传感器的权重
+#define PID_2			0	// 将PID控制改成 y = k * x^2 ,用这种的时候，p得很小，0.0几
+#define POS_I_MAX		1000
+#define POS_I_MIN		(-1000)
 
 void moter_control(void);
 void PID_Init(void);
@@ -31,7 +34,9 @@ void AutoReloadCallbackR(int Error);
 void AutoReloadCallbackL(int Error);
 void motor_init(void);
 void motor_stop(void);
+void read_error(void);
 void read_status(void);
 int get_error(unsigned char ms);
+void v_change(void);
 
 #endif

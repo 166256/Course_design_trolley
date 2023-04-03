@@ -131,7 +131,7 @@ void TIM1_UP_IRQHandler(void)
 		tim1_flag = 1;
 		tim1_num1++;
 		tim1_num2++;
-		if(start_flag && judge_S)
+		if(judge_S)
 			tim1_num3++;
 	}
 	TIM_ClearITPendingBit(TIM1,TIM_IT_Update);		//清除中断标志位

@@ -37,3 +37,4 @@
 .\objects\protocol.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\protocol.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\protocol.o: C:\zlg\KEIL5\keil5\ARM\ARMCC\Bin\..\include\math.h
+.\objects\protocol.o: ..\HARDWARE\CONTROL\control.h
