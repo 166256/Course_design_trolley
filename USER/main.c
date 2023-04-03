@@ -49,7 +49,7 @@ int main (void)
 	Tim_EncoderL_Init();
 	MPU9250_Init();
 	IMU_OffsetInit();
-//	kalman_config_angle(&kalman_angle);
+	kalman_config_angle(&kalman_angle);
 	
 /**********************************************/
 
@@ -59,19 +59,29 @@ int main (void)
 	
 	while(1)
 	{		
+		
+		OLED_ShowNum(8*8,0,gyro_angle/100,1,1);
+		OLED_ShowNum(8*9,0,(gyro_angle/10)%10,1,1);
+		OLED_ShowNum(8*10,0,gyro_angle%10,1,1);
+		OLED_ShowNum(8*8,2,error,1,1);
+		OLED_ShowNum(8*8,4,path_status,1,1);
+		
 		if(start_flag && tim1_num1 >= 4)
 //		if(tim1_num1 >= 4)
 		{
 			tim1_num1 = 0;
 	
 			Position_error = get_error(5); // 每读一次传感器需要10ms
+//			v_change();	// 弯道减速
 			
 			calc_motor_Right_rotate_speed(); // 读取编码器读值
 			calc_motor_Left_rotate_speed();
 			AutoReloadCallbackR(Position_error); // 参数为Position_error时要改方向环的PID，改的很小，建议为原本参数除以20
 			AutoReloadCallbackL(Position_error);
 		
-			track_construction(gyro_angle_dir,20); // 轨迹重构		
+			track_construction(gyro_angle_dir,20); // 轨迹重构
+//			DEBUG_printf("%f,%f,%f,%f,%f,%f\n",gyro_angle_dir, mag_angle_dir, kalman_fusion_angle, IMU_9250.mag_x, IMU_9250.mag_y, IMU_9250.mag_z);		
+//			DEBUG_printf("%f,%f,%f\n", IMU_9250.mag_x, IMU_9250.mag_y, IMU_9250.mag_z);				
 			gyro_angle = (short) gyro_angle_dir;
 		}
 		else if(start_flag == 0)
@@ -86,20 +96,16 @@ int main (void)
 			R1 = TCRT_R1;
 			R2 = TCRT_R2;
 		
-			read_error();	// 得到偏离中心值
-			read_status();	// 状态机
+			read_error();
+			read_status();
 			
 			IMU_9250_GetValues();
 			get_angle_IMU();
-//			Calibrated_Mag(); // 椭球矫正
-//			kalman_fusion_angle = kalman_update(&kalman_angle,mag_angle_dir,Mov_9250.gyro_z,0.005); // 卡尔曼融合		
-			gyro_angle = (short) gyro_angle_dir;
 			
-			OLED_ShowNum(8*8,0,gyro_angle/100,1,1);
-			OLED_ShowNum(8*9,0,(gyro_angle/10)%10,1,1);
-			OLED_ShowNum(8*10,0,gyro_angle%10,1,1);
-			OLED_ShowNum(8*8,2,error,1,1);
-			OLED_ShowNum(8*8,4,path_status,1,1);
+			Calibrated_Mag();
+			kalman_fusion_angle = kalman_update(&kalman_angle,mag_angle_dir,Mov_9250.gyro_z,0.005);
+			
+			gyro_angle = (short) gyro_angle_dir;
 		}
 		if(tim1_num2 >= 8 && start_flag == 1)
 		{
@@ -112,11 +118,17 @@ int main (void)
 			motor_buffer[12] = (unsigned char)Position_error;
 			motor_buffer[13] = path_status;
 			motor_buffer[14] = offset_R*2;
+//			SHORT_SPLIT_CHAR(13,offset_R*2);
 			SHORT_SPLIT_CHAR(15,encoderNum_L);
 
 			packet_bluedata(motor_buffer);
 		}
-
+//		if(tim1_num3 >= 900)
+//		{
+//			tim1_num3 = 0;
+//			judge_S = 0;
+//			Position_KP = Position_KP * 0.6;
+//		}
 	}	
 }	
 

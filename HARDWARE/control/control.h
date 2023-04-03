@@ -23,7 +23,7 @@ extern float Position_KP,Position_KI,Position_KD;	// 方向环PID参数
 
 #define PID_DIR_ADD 	0	// 方向环PID改成增量
 #define WEIGNT_LOWER	1	// 降低旁边传感器的权重
-#define PID_2			0	// 将PID控制改成 y = k * x^2 ,用这种的时候，p得很小，0.0几
+#define PID_2			1	// 将PID控制改成 y = k * x^2 ,用这种的时候，p得很小，0.0几
 #define POS_I_MAX		1000
 #define POS_I_MIN		(-1000)
 

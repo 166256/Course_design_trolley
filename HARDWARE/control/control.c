@@ -13,11 +13,11 @@ unsigned char status = 2;	// 记录现在是从左往右数的第几个传感器检测到黑线
 int Position_error = 0;		// 方向环PID的error，控制方法2
 char error_sensor[7] = {0};	// 记录在一个控制周期内，每个传感器各检测到几次，索引是从左往右数的第几个传感器（包括两个虚拟传感器）
 int error = 0;				// 方向环PID的error，控制方法1
-short v_basic = 95;			// 电机基础速度
+short v_basic = 120;			// 电机基础速度
 short v_target = 0;			// 引入弯道降速后，存储目标的
 PID pid_L,pid_R;			// 速度环的PID结构体变量
 
-float Position_KP = 6.9,Position_KI = 0,Position_KD = 0;	// 方向环PID参数
+float Position_KP = 0.75,Position_KI = 0,Position_KD = 0.4;	// 方向环PID参数
 unsigned char lock = 0;
 void read_status()
 {
@@ -27,22 +27,24 @@ void read_status()
 		path_status = (path_status + 1) % 3;
 	}
 	if(lock == 1 && (M0 && L1 && R1 && (R2 || L2)) == 0)
+	{
 		lock =0;
+	}
 	switch(path_status)
 	{
 		case 0:
-			v_basic = 110; // 120 // 130
-			Position_KP = 0.65; // 0.09 // 0.085 sudu80
-			Position_KD = 0; // 0.2 // 0.4
+			v_basic = 120; // 120 // 130
+			Position_KP = 0.09; // 0.09 // 0.085 sudu80
+			Position_KD = 0.2; // 0.2 // 0.4
 			break;
 		case 1:
-			v_basic = 110;
-			Position_KP = 0.5;
-			Position_KD = 0.2;
+			v_basic = 120;
+			Position_KP = 0.08;
+			Position_KD = 0;
 			break;
 		case 2:
 			v_basic = 95;
-			Position_KP = 0.5;
+			Position_KP = 0.08;
 			Position_KD = 0;
 			break;
 		default:break;
@@ -105,17 +107,17 @@ int get_error(unsigned char ms)
 		position_error += error_sensor[i] * (i - 3) * ms;
 #elif WEIGNT_LOWER==1
 		if(i==6)
-			position_error += (int)(error_sensor[i] * 10);
+			position_error += (int)(error_sensor[i] * 4);
 		else if(i==0)
-			position_error += (int)(error_sensor[i] * -10);
+			position_error += (int)(error_sensor[i] * -4);
 		else if(i==5)
-			position_error += (int)(error_sensor[i] * 5);
-		else if(i==1)
-			position_error += (int)(error_sensor[i] * -5);
-		else if(i>3)
 			position_error += (int)(error_sensor[i] * 3);
-		else if(i<3)
+		else if(i==1)
 			position_error += (int)(error_sensor[i] * -3);
+		else if(i>3)
+			position_error += (int)(error_sensor[i] * 2);
+		else if(i<3)
+			position_error += (int)(error_sensor[i] * -2);
 #endif
 		error_sensor[i] = 0;
 	}
@@ -143,10 +145,12 @@ void offset_modify()
 	v_target = v_basic;
 	pid_R.target_val = v_basic;
 	pid_L.target_val = v_basic;
-	Position_KP = (float)offset1 / 100;
+//	Position_KP = (float)offset1 / 10;
+	Position_KP = (float)offset1 / 1000;
 //	Position_KI = (float)offset2 / 100;
-	Position_KD = (float)offset3 / 100;
+	Position_KD = (float)offset3 / 10;
 	
+	// 调试电机用
 	pid_L.Kp = (float)offset2 / 10;
 //	pid_L.Ki = (float)offset2 / 100;
 //	pid_L.Kd = (float)offset3 / 100;
@@ -155,12 +159,11 @@ void offset_modify()
 //	pid_R.Ki = (float)offset2 / 100;
 //	pid_R.Kd = (float)offset3 / 100;
 }
-
+float Bias,Integral_bias,Last_Bias,Bias_2;
 int PID_dir(int Error,int Target)   //方向PID(位置式)//Target=0;
 {  
 	int Output = 0;
 	
-	static float Bias,Integral_bias,Last_Bias,Bias_2;
 	Bias = (float)(Error - Target);                                  //计算偏差
 	Integral_bias += Bias;                                  //求出偏差的积分
 	if(Integral_bias < POS_I_MIN)
